@@ -162,7 +162,6 @@ Cypress.Commands.add('invokeAmexUpdateMerchant', (clientId, clientSecret, mercha
 Cypress.Commands.add('invokeAmexApi', (clientId, clientSecret, method, apiEndpoint) => {
     return cy.request({
         method: method,
-        //url: Cypress.env('baseUrl') + 'merchant/' + merchantConfigApiId,
         url: Cypress.env('baseUrl') + apiEndpoint,
         headers: {
             'client-id': clientId,
@@ -229,6 +228,56 @@ Cypress.Commands.add('invokeAmexUpdatePosConfig', (clientId, clientSecret, posCo
             pinCaptureCapability: posConfig.pinCaptureCapability
         },
         
+    }).then((response) => {
+        return response
+    })
+})
+
+Cypress.Commands.add('invokeAmexPurchase', (apiCredentials, purchaseDetails, posConfigApiId, merchantConfigApiId) => {
+    return cy.request({
+        method: 'POST',
+        url: Cypress.env('baseUrl') + 'purchase',
+        headers: {
+            'client-id': apiCredentials[0][2].value,
+            'client-secret' : apiCredentials[0][3].value,
+            'host': Cypress.env('hostServices')
+        },
+        body: {
+            posConfigId: posConfigApiId,
+            merchantConfigId: merchantConfigApiId,
+            cardAcceptorTerminalId: purchaseDetails.cardAcceptorTerminalId,
+            cardNumber: purchaseDetails.cardNumber,
+            cardHolder: purchaseDetails.cardHolder,
+            expiryMonth: purchaseDetails.expiryMonth,
+            expiryYear: purchaseDetails.expiryYear,
+            cid: purchaseDetails.cid,
+            cardToken: purchaseDetails.cardToken,
+            amount: purchaseDetails.amount,
+            currency: purchaseDetails.currency,
+            track1Data: purchaseDetails.track1Data,
+            track2Data: purchaseDetails.track2Data,
+            iccData: purchaseDetails.iccData,
+            customerData: {
+                cardmemberFirstName: purchaseDetails.customerData.cardmemberFirstName,
+                cardmemberLastName: purchaseDetails.customerData.cardmemberLastName,
+                cardmemberBillingAddress: purchaseDetails.customerData.cardmemberBillingAddress,
+                cardmemberPostalCode: purchaseDetails.customerData.cardmemberPostalCode,
+                cardmemberPhone: purchaseDetails.customerData.cardmemberPhone,
+                cardmemberEmail: purchaseDetails.customerData.cardmemberEmail,
+                hostServer: purchaseDetails.customerData.hostServer,
+                browserType: purchaseDetails.customerData.browserType,
+                merchantSkuNo: purchaseDetails.customerData.merchantSkuNo,
+                ipAddress: purchaseDetails.customerData.ipAddress,
+                shipToFirstName: purchaseDetails.customerData.shipToFirstName,
+                shipToLastName: purchaseDetails.customerData.shipToLastName,
+                shipToPhone: purchaseDetails.customerData.shipToPhone,
+                shipToAddress: purchaseDetails.customerData.shipToAddress,
+                shipToPostalCode: purchaseDetails.customerData.shipToPostalCode,
+                shipToMethodCode: purchaseDetails.customerData.shipToMethodCode,
+                shipToCountryCode: purchaseDetails.customerData.shipToCountryCode
+            },
+            mockResponseCode: purchaseDetails.responseCode
+        }
     }).then((response) => {
         return response
     })

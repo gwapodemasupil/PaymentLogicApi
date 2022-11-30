@@ -10,8 +10,8 @@ module.exports = defineConfig({
     },
   },
   env: {
-    baseUrl: "https://stage-services.paymentlogic.com.au/amex/",
-    hostServices: "stage-services.paymentlogic.com.au",
+    baseUrl: "https://stage-amexapi.paymentlogic.com.au/",
+    hostServices: "stage-amexapi.paymentlogic.com.au",
     db: {
       userName: "sql_Arvin",
       password: "ONU0ZyLGbsAGqxR",
@@ -23,4 +23,15 @@ module.exports = defineConfig({
       }
     }
   },
+  clientCertificates: [
+    {
+      url: 'https://stage-amexapi.paymentlogic.com.au',
+      certs: [
+        {
+          pfx: 'cypress/certificates/AMEX-CLIENT-CERT-STAGING.pfx',
+          passphrase: 'cypress/certificates/password.txt'
+        },
+      ]
+    },
+  ]
 });

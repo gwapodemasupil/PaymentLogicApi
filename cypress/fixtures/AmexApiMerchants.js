@@ -16,7 +16,7 @@ class AmexApiMerchants {
             merchantStreet : 'AmexApiAddMerchant_' + cf.generateRandomString(5),
             merchantCity : 'AmexApiAddMerchant_' + cf.generateRandomString(3),
             merchantPostalCode : cf.generateRandomNumbers(4),
-            merchantRegionCode : cf.generateRandomNumbers(1),
+            merchantRegionCode : cf.generateRandomNumbers(1)
         }
         return data
     }

@@ -28,7 +28,7 @@ class commonFunctions {
         }
         else
         {
-            var cardnumberList = ['371111111111114', '371111111111130', '371111111111148']
+            var cardnumberList = ['371111111111114', '371111111111130', '371111111111161']
             cardnumber = cardnumberList[(Math.random() * cardnumberList.length) | 0]
         }
         return cardnumber;
@@ -53,7 +53,7 @@ class commonFunctions {
         }
         else
         {
-            return expiryMonth
+            return expiryMonth.toString();
         }
     }
 
@@ -128,7 +128,7 @@ class commonFunctions {
 
     generateCardmemberAuthMethod() {
         var cardMemberAuth = ''
-        var cardMemberAuthList = ['0', '1', '2', '3', '4', '5', '6', 'S']
+        var cardMemberAuthList = ['0', '1', '5', '6', 'S']
         return cardMemberAuth = cardMemberAuthList[(Math.random() * cardMemberAuthList.length) | 0]
     }
 
@@ -154,6 +154,12 @@ class commonFunctions {
         var terminalOutput = ''
         var terminalOutputList = ['0', '1', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C']
         return terminalOutput = terminalOutputList[(Math.random() * terminalOutputList.length) | 0]
+    }
+
+    getLastDigit(num, digit) {
+        var last4Str = String(num).slice(digit);
+        var last4Num = Number(last4Str);
+        return last4Num;
     }
 }
 

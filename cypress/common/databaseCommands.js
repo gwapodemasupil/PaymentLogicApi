@@ -25,9 +25,23 @@ class databaseCommands {
         })
     }
 
+    getAmexApiRandomMerchantConfig() {
+        var dbCommand = `select top 1 * from AmexApiMerchantConfig where ApiCredentialsId = 3 and isActive = 1 order by newid()`;
+        return cy.sqlServer(dbCommand).then((result) => {
+            return result
+        })
+    }
+
     /*dbo.AmexApiPosConfig */
     getAmexApiPosConfigByApiId(apiId) {
         var dbCommand = `select * from AmexApiPosConfig where apiid = '` + apiId + `'`;
+        return cy.sqlServer(dbCommand).then((result) => {
+            return result
+        })
+    }
+
+    getAmexApiRandomPosConfig() {
+        var dbCommand = `select top 1* from AmexApiPosConfig where ApiCredentialsId = 3 and isActive = 1 order by newid()`;
         return cy.sqlServer(dbCommand).then((result) => {
             return result
         })
@@ -44,6 +58,13 @@ class databaseCommands {
     /*dbo.Cards*/
     getCardInfoByCardholderName(cardholderName) {
         var dbCommand = `select top 1 * from Cards where description = '` + cardholderName + `'` + ` order by id desc`;
+        return cy.sqlServer(dbCommand).then((result) => {
+            return result
+        })
+    }
+
+    getCardDetailsByApiId(apiId) {
+        var dbCommand = `select * from Cards where apiid = '` + apiId + `'`;
         return cy.sqlServer(dbCommand).then((result) => {
             return result
         })
