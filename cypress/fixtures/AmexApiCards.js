@@ -5,7 +5,7 @@ import commonFunctions from "../common/commonFunctions"
 const cf = new commonFunctions
 
 class AmexApiCards {
-    Cards(cardType) {
+    Cards(cardType, tokenStatus) {
         var data = {
             cardNumber : cf.generateRandomCardNumber(cardType),
             cardHolder : 'AmexApiAddCard_' + cf.generateRandomString(7),
@@ -13,7 +13,8 @@ class AmexApiCards {
             countryCode : cf.generateRandomCountryCode(),
             expiryMonth : cf.generateRandomExpiryMonth(),
             expiryYear : cf.generateExpiryYear(), 
-            tokenStatus : cf.generateRandomTokenStatus()
+            //tokenStatus : cf.generateRandomTokenStatus()
+            tokenStatus : tokenStatus
         }
         return data
     }

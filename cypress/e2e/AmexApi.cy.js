@@ -26,9 +26,24 @@ describe('01_Amex API Card Module', () => {
       acm.addAmexCard(cards, cardType);
     })
 
-    it('02 - verify that it can successfully update and get card token status', () => {
+    it.only('02-01 - verify that it can successfully update token status to suspend and get its status', () => {
       const cardType = 'amex'
-      const cards = card.Cards(cardType);
+      const tokenStatus = 'suspend'
+      const cards = card.Cards(cardType, tokenStatus);
+      acm.addAmexCard(cards, cardType, true);
+    })
+
+    it.only('02-02 - verify that it can successfully update token status to resume and get its status', () => {
+      const cardType = 'amex'
+      const tokenStatus = 'resume'
+      const cards = card.Cards(cardType, tokenStatus);
+      acm.addAmexCard(cards, cardType, true);
+    })
+
+    it.only('02-03 - verify that it can successfully update token status to delete and get its status', () => {
+      const cardType = 'amex'
+      const tokenStatus = 'delete'
+      const cards = card.Cards(cardType, tokenStatus);
       acm.addAmexCard(cards, cardType, true);
     })
 
@@ -84,7 +99,7 @@ describe('03_AMEX API Pos Config Module', () => {
 })
 
 describe('04_AMEX API Purchase Module', () => {
-    it.only('01 - verify that it can successfully perform payment', () => {
+    it('01 - verify that it can successfully perform payment', () => {
       const cardType = 'amex'
       const purchaseDetails = aap.Purchase(cardType);
       apm.amexPurchase(purchaseDetails);
