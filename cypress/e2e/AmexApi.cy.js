@@ -26,21 +26,21 @@ describe('01_Amex API Card Module', () => {
       acm.addAmexCard(cards, cardType);
     })
 
-    it.only('02-01 - verify that it can successfully update token status to suspend and get its status', () => {
+    it('02-01 - verify that it can successfully update token status to suspend and get its status', () => {
       const cardType = 'amex'
       const tokenStatus = 'suspend'
       const cards = card.Cards(cardType, tokenStatus);
       acm.addAmexCard(cards, cardType, true);
     })
 
-    it.only('02-02 - verify that it can successfully update token status to resume and get its status', () => {
+    it('02-02 - verify that it can successfully update token status to resume and get its status', () => {
       const cardType = 'amex'
       const tokenStatus = 'resume'
       const cards = card.Cards(cardType, tokenStatus);
       acm.addAmexCard(cards, cardType, true);
     })
 
-    it.only('02-03 - verify that it can successfully update token status to delete and get its status', () => {
+    it('02-03 - verify that it can successfully update token status to delete and get its status', () => {
       const cardType = 'amex'
       const tokenStatus = 'delete'
       const cards = card.Cards(cardType, tokenStatus);
@@ -70,7 +70,7 @@ describe('02_Amex API Merchant Module', () => {
       amm.addAmexMerchant(merchants, false, true);
     })
 
-    it('04 - verify that it can successfully delete Merchant', () => {
+    it.skip('04 - verify that it can successfully delete Merchant', () => {
       const merchants = merc.Merchants();
       amm.addAmexMerchant(merchants, false, false, true);
     })
@@ -92,14 +92,14 @@ describe('03_AMEX API Pos Config Module', () => {
       apc.addAmexPosConfig(posConfig, false, true)
     })
 
-    it('04 - verify that it can successfully delete pos config', () => {
+    it.skip('04 - verify that it can successfully delete pos config', () => {
       const posConfig = posCon.PosConfig();
       apc.addAmexPosConfig(posConfig, false, false, true)
     })
 })
 
 describe('04_AMEX API Purchase Module', () => {
-    it('01 - verify that it can successfully perform payment', () => {
+    it.only('01 - verify that it can successfully perform payment', () => {
       const cardType = 'amex'
       const purchaseDetails = aap.Purchase(cardType);
       apm.amexPurchase(purchaseDetails);

@@ -20,22 +20,27 @@ class AmexPurchaseModule {
                     merchantConfigApiId = merchConfigResult[0][7].value;
 
                     cy.invokeAmexPurchase(credentials, purchaseDetails, posConfigApiId, merchantConfigApiId).then((apiResponse) => {
-
+                        this.responseBodyCheckforPurchase(apiResponse);
                     })
                 })
             })
         })
     }
 
-    /*responseBodyCheckforPurchase(apiResponse, purchaseDetails) {
+    responseBodyCheckforPurchase(apiResponse) {
         expect(apiResponse.status).to.equal(200)
-        expect(apiResponse.body.responseCode, purchaseDetails.responseCode, 'Response code checking');
-        expect(apiResponse.body.amount, purchaseDetails.amount, 'Amount checking');
-        expect(apiResponse.body.transactionId, , '');
-        expect(apiResponse.body.transactionDateTime, , '');
-        expect(apiResponse.body.settlementDate, , '');
+        //expect(apiResponse.body.responseCode, purchaseDetails.responseCode, 'Response code checking');
+        //expect(apiResponse.body.amount, purchaseDetails.amount, 'Amount checking');
+        //expect(apiResponse.body.transactionId, , '');
+        //expect(apiResponse.body.transactionDateTime, , '');
+        //expect(apiResponse.body.settlementDate, , '');
+        expect(apiResponse.body).to.have.property('responseCode')
+        expect(apiResponse.body).to.have.property('amount')
+        expect(apiResponse.body).to.have.property('transactionId')
+        expect(apiResponse.body).to.have.property('transactionDateTime')
+        expect(apiResponse.body).to.have.property('settlementDate')
 
-    }*/
+    }
 }
 
 export default AmexPurchaseModule
