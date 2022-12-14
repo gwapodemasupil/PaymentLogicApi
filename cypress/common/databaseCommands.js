@@ -69,6 +69,15 @@ class databaseCommands {
             return result
         })
     }
+
+    /*dbo.Transactions*/
+    getTransactionByApiId(apiId) {
+        //var dbCommand = `select * from transactions where apiid = '` + apiId + `'`;
+        var dbCommand = `select top 1 * from transactions where carddetailid is null order by id desc`;
+        return cy.sqlServer(dbCommand).then((result) => {
+            return result
+        })
+    }
 }
 
 export default databaseCommands

@@ -37,10 +37,12 @@ class AmexApiPurchase {
                 shipToPhone: '0400111222',
                 shipToAddress: 'AmexApiPurchase_shipToAddress_' + cf.generateRandomString(5),
                 shipToPostalCode: cf.generateRandomNumbers(4),
-                shipToMethodCode: cf.generateRandomNumbers(2),
+                shipToMethodCode: cf.generateShipToMethodCode(),
                 shipToCountryCode: cf.generateRandomCountryCode(),
             },
-            responseCode: '000'
+            responseCode: '000',
+            getwaySettlementDate: cf.generateGatewaySettlementDate(),
+            getAuthorisationDate: cf.generateAuthorisationDate()
         }
         return data
     }

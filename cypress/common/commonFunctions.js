@@ -161,6 +161,41 @@ class commonFunctions {
         var last4Num = Number(last4Str);
         return last4Num;
     }
+
+    generateShipToMethodCode() {
+        var methodCode = ''
+        var methodCodeList = ['01', '02', '03', '04', '05', '06']
+        return methodCode = methodCodeList[(Math.random() * methodCodeList.length) | 0]
+    }
+
+    generateGatewaySettlementDate() {
+        let getwaySettlementDate = '';
+        let date = '';
+        let aus = new Date();
+        let aus_time = aus.getUTCHours() + 11;
+
+        let year = aus.getFullYear();
+        let month = ("0" + (aus.getMonth() + 1)).slice(-2);
+        if(aus_time >= 18) {
+            date = ("0" + (aus.getDate()+ 1)).slice(-2);
+        }
+        else {
+            date = ("0" + aus.getDate()).slice(-2);
+        }
+
+        return getwaySettlementDate = year + "-" + month + "-" + date;
+    }
+
+    generateAuthorisationDate() {
+        let authorisationDate = '';
+        let aus = new Date();
+        let aus_time = aus.getUTCHours() + 11;
+
+        let year = aus.getFullYear();
+        let month = ("0" + (aus.getMonth() + 1)).slice(-2);
+        let date =  ("0" + aus.getDate()).slice(-2);
+        return authorisationDate = year + "-" + month + "-" + date;
+    }
 }
 
 export default commonFunctions
