@@ -13,7 +13,6 @@ class AmexApiCards {
             countryCode : cf.generateRandomCountryCode(),
             expiryMonth : cf.generateRandomExpiryMonth(),
             expiryYear : cf.generateExpiryYear(), 
-            //tokenStatus : cf.generateRandomTokenStatus()
             tokenStatus : tokenStatus
         }
         return data

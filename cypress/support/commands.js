@@ -71,6 +71,7 @@ Cypress.Commands.add('invokeAmexAddCard', (clientId, clientSecret, cards) => {
     return cy.request({
         method: 'POST',
         url: Cypress.env('baseUrl') + 'card/tokenise',
+        failOnStatusCode: false,
         headers: {
             'client-id': clientId,
             'client-secret' : clientSecret,
@@ -89,13 +90,14 @@ Cypress.Commands.add('invokeAmexAddCard', (clientId, clientSecret, cards) => {
     })
 })
 
-Cypress.Commands.add('invokeAmexUpdateCard', (apiCredentials, apiEndpoint, tokenRefId, tokenStatus) => {
+Cypress.Commands.add('invokeAmexUpdateCard', (clientId, clientSecret, apiEndpoint, tokenRefId, tokenStatus) => {
     return cy.request({
         method: 'PUT',
         url: Cypress.env('baseUrl') + apiEndpoint,
+        failOnStatusCode: false,
         headers: {
-            'client-id': apiCredentials[0][2].value,
-            'client-secret' : apiCredentials[0][3].value,
+            'client-id': clientId,
+            'client-secret' : clientSecret,
             'host': Cypress.env('hostServices')
         },
         body: {
@@ -105,37 +107,26 @@ Cypress.Commands.add('invokeAmexUpdateCard', (apiCredentials, apiEndpoint, token
     })
 })
 
-Cypress.Commands.add('invokeAmexAddMerchant', (clientId, clientSecret, merchants) => {
-    return cy.request({
-        method: 'POST',
-        url: Cypress.env('baseUrl') + 'merchant',
-        headers: {
-            'client-id': clientId,
-            'client-secret' : clientSecret,
-            'host': Cypress.env('hostServices')
-        },
-        body: {
-            merchantName: merchants.merchantName,
-            merchantCategoryCode: merchants.merchantCategoryCode,
-            merchantSENumber: merchants.merchantSENumber,
-            merchantCountryCode: merchants.merchantCountryCode,
-            merchantPhone: merchants.merchantPhone,
-            merchantEmail: merchants.merchantEmail,
-            merchantStreet: merchants.merchantStreet,
-            merchantCity: merchants.merchantCity,
-            merchantPostalCode: merchants.merchantPostalCode,
-            merchantRegionCode: merchants.merchantRegionCode
-        },
-        
-    }).then((response) => {
-        return response
-    })
-})
+Cypress.Commands.add('invokeAmexAddMerchant', (clientId, clientSecret, merchants, merchantConfigApiId) => {
+    let endpoint = '';
+    let requestMethod = '';
 
-Cypress.Commands.add('invokeAmexUpdateMerchant', (clientId, clientSecret, merchants, merchantConfigApiId) => {
+    //Update Merchant endpoint
+    if (merchantConfigApiId != null) {
+        requestMethod = 'PUT';
+        endpoint = Cypress.env('baseUrl') + 'merchant/' + merchantConfigApiId;
+    }
+
+    //Add Merchant endpoint
+    else {
+        requestMethod = 'POST';
+        endpoint = Cypress.env('baseUrl') + 'merchant';
+    }
+
     return cy.request({
-        method: 'PUT',
-        url: Cypress.env('baseUrl') + 'merchant/' + merchantConfigApiId,
+        method: requestMethod,
+        url: endpoint,
+        failOnStatusCode: false,
         headers: {
             'client-id': clientId,
             'client-secret' : clientSecret,
@@ -163,6 +154,7 @@ Cypress.Commands.add('invokeAmexApi', (clientId, clientSecret, method, apiEndpoi
     return cy.request({
         method: method,
         url: Cypress.env('baseUrl') + apiEndpoint,
+        failOnStatusCode: false,
         headers: {
             'client-id': clientId,
             'client-secret' : clientSecret,
@@ -173,10 +165,27 @@ Cypress.Commands.add('invokeAmexApi', (clientId, clientSecret, method, apiEndpoi
     })
 })
 
-Cypress.Commands.add('invokeAmexAddPosConfig', (clientId, clientSecret, posConfig) => {
+Cypress.Commands.add('invokeAddPosConfigEndpoint', (clientId, clientSecret, posConfig, posConfigApiId) => {
+    let requestMethod = '';
+    let endpoint = '';
+
+    //Update POS Config endpoint
+    if (posConfigApiId != null) {
+        requestMethod = 'PUT'
+        endpoint = Cypress.env('baseUrl') + 'posData/' + posConfigApiId;
+    }
+
+    //Add POS Config endpoint
+    else {
+        requestMethod = 'POST'
+        endpoint = Cypress.env('baseUrl') + 'posData';
+    }
+
     return cy.request({
-        method: 'POST',
-        url: Cypress.env('baseUrl') + 'posData',
+        method: requestMethod,
+        //url: Cypress.env('baseUrl') + 'posData',
+        url: endpoint,
+        failOnStatusCode: false,
         headers: {
             'client-id': clientId,
             'client-secret' : clientSecret,
@@ -203,10 +212,11 @@ Cypress.Commands.add('invokeAmexAddPosConfig', (clientId, clientSecret, posConfi
     })
 })
 
-Cypress.Commands.add('invokeAmexUpdatePosConfig', (clientId, clientSecret, posConfig, posConfigId) => {
+/*Cypress.Commands.add('invokeAmexUpdatePosConfig', (clientId, clientSecret, posConfig, posConfigId) => {
     return cy.request({
         method: 'PUT',
         url: Cypress.env('baseUrl') + 'posData/' + posConfigId,
+        failOnStatusCode: false,
         headers: {
             'client-id': clientId,
             'client-secret' : clientSecret,
@@ -231,12 +241,13 @@ Cypress.Commands.add('invokeAmexUpdatePosConfig', (clientId, clientSecret, posCo
     }).then((response) => {
         return response
     })
-})
+})*/
 
 Cypress.Commands.add('invokeAmexPurchase', (apiCredentials, purchaseDetails, posConfigApiId, merchantConfigApiId) => {
     return cy.request({
         method: 'POST',
         url: Cypress.env('baseUrl') + 'purchase',
+        failOnStatusCode: false,
         headers: {
             'client-id': apiCredentials[0][2].value,
             'client-secret' : apiCredentials[0][3].value,

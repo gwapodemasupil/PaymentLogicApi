@@ -1,9 +1,12 @@
 /// <reference types="cypress" />
 
+import commonChecking from "../../common/commonChecking"
 import commonFunctions from "../../common/commonFunctions"
 import databaseCommands from "../../common/databaseCommands"
 import AmexApiPosConfig from "../../fixtures/AmexApiPosConfig"
 
+
+const cc = new commonChecking
 const cf = new commonFunctions
 const dc = new databaseCommands
 const aapc = new AmexApiPosConfig
@@ -18,8 +21,8 @@ class AmexApiPosConfigModule {
         dc.getRandomApiCredentials().then((credentials) => {
             apiCredentialsId = credentials[0][0].value;
 
-            /*Invoke Amex Add Pos Config endpoint */
-            cy.invokeAmexAddPosConfig(credentials[0][2].value, credentials[0][3].value, posConfig).then((apiResponse) => {
+            /*Invoke Add Pos Config endpoint */
+            cy.invokeAddPosConfigEndpoint(credentials[0][2].value, credentials[0][3].value, posConfig).then((apiResponse) => {
                 this.responseBodyCheckforAmexAddPosConfig(apiResponse);
                 posConfigId = apiResponse.body.posConfigId;
                 apiEndpoint = '/posData/' + posConfigId;
@@ -32,7 +35,7 @@ class AmexApiPosConfigModule {
                 /*Update Pos Config */
                 if (isUpdatePosConfig) {
                     let newPosConfig = aapc.PosConfig();
-                    cy.invokeAmexUpdatePosConfig(credentials[0][2].value, credentials[0][3].value, newPosConfig, posConfigId).then((apiResponse) => {
+                    cy.invokeAddPosConfigEndpoint(credentials[0][2].value, credentials[0][3].value, newPosConfig, posConfigId).then((apiResponse) => {
                         this.responseBodyCheckForAmexUpdatePosConfig(apiResponse);
 
                         dc.getAmexApiPosConfigByApiId(posConfigId).then((dbResponse) => {
@@ -59,6 +62,43 @@ class AmexApiPosConfigModule {
                     })
                 }
             })
+        })
+    }
+
+    addPosConfigUsingInvalidCredentials(posConfig, isUpdatePosConfig = false) {
+        let posConfigApiId = '';
+
+        dc.getAmexApiRandomPosConfig().then((dbResponse) => {
+
+            if (isUpdatePosConfig) {
+                posConfigApiId = dbResponse[0][15].value;
+            }
+
+            else {
+                posConfigApiId = null;
+            }
+
+            //Invoke Add/Update Pos Config endpoint using a null credentials
+            cy.invokeAddPosConfigEndpoint(null, null, posConfig, posConfigApiId).then((apiResponse) => {
+                cc.responseBodyCheckForInvalidCredentials(apiResponse);
+            })
+
+            //Invoke Add/Update Pos Config endpoint using an invalid credentials
+            cy.invokeAddPosConfigEndpoint(cf.generateRandomString(7), cf.generateRandomString(7), posConfig, posConfigApiId).then((apiResponse) => {
+                cc.responseBodyCheckForInvalidCredentials(apiResponse);
+            })
+        })
+    }
+
+    accessPosConfigUsingInvalidCredentials(method) {
+        let apiEndpoint = '';
+        let posConfigApiId = '';
+
+        dc.getAmexApiRandomPosConfig().then((dbResponse) => {
+            posConfigApiId = dbResponse[0][15].value
+            apiEndpoint = 'posData/' + posConfigApiId;
+
+            cc.invokeTargetApiEndpoint(method, apiEndpoint);
         })
     }
 

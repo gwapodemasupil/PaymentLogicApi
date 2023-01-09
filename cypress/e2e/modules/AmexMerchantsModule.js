@@ -1,8 +1,12 @@
 /// <reference types="cypress" />
 
+import commonChecking from "../../common/commonChecking"
+import commonFunctions from "../../common/commonFunctions"
 import databaseCommands from "../../common/databaseCommands"
 import AmexApiMerchants from "../../fixtures/AmexApiMerchants"
 
+const cc = new commonChecking
+const cf = new commonFunctions
 const dc = new databaseCommands
 const aam = new AmexApiMerchants
 
@@ -43,7 +47,8 @@ class AmexMerchantsModule {
                         if (isUpdateMerchant) {
                             let isUpdate = true;
                             let newMerchant = aam.Merchants()
-                            cy.invokeAmexUpdateMerchant(credentials[0][2].value, credentials[0][3].value, newMerchant, merchantConfigId).then((apiResponse) => {
+
+                            cy.invokeAmexAddMerchant(credentials[0][2].value, credentials[0][3].value, newMerchant, merchantConfigId).then((apiResponse) => {
                                 this.responseBodyCheckForAmexUpdateMerchant(apiResponse);
 
                                 /*Get the merchant's information added in the database */
@@ -62,9 +67,7 @@ class AmexMerchantsModule {
                         else if (isGetMerchant) {
                             cy.invokeAmexApi(credentials[0][2].value, credentials[0][3].value, 'GET', apiEndpoint).then((apiResponse) => {
                                 this.responseBodyCheckForGetMerchant(apiResponse, merchants);
-
                             })
-
                         }
 
                         /*Delete Merchant */
@@ -84,6 +87,42 @@ class AmexMerchantsModule {
         })    
     }
 
+    addMerchantUsingInvalidCredentials(merchants, isUpdateMerchant = false) {
+        let merchantConfigApiId = '';
+
+        dc.getAmexApiRandomMerchantConfig().then((dbResponse) => {
+
+            if (isUpdateMerchant) {
+                merchantConfigApiId = dbResponse[0][7].value;
+            }
+            else {
+                merchantConfigApiId = null;
+            }
+
+            //Invoke Add/Update Merchant endpoint using a null credentials
+            cy.invokeAmexAddMerchant(null, null, merchants, merchantConfigApiId).then((apiResponse) => {
+                this.responseBodyCheckForInvalidCredentials(apiResponse);
+            })
+
+            //Invoke Add/Update Merchant endpoint using an invalid credentials
+            cy.invokeAmexAddMerchant(cf.generateRandomString(7), cf.generateRandomString(7), merchants, merchantConfigApiId).then((apiResponse) => {
+                this.responseBodyCheckForInvalidCredentials(apiResponse);
+            })
+        })     
+    }
+
+    accessMerchantUsingInvalidCredentials(method) {
+        let apiEndpoint = '';
+        let merchantConfigApiId = '';
+
+        dc.getAmexApiRandomMerchantConfig().then((dbResponse) => {
+            merchantConfigApiId = dbResponse[0][7].value
+            apiEndpoint = 'merchant/' + merchantConfigApiId;
+
+            cc.invokeTargetApiEndpoint(method, apiEndpoint);
+        })
+    }
+
     /*Checking the properties of the api response body*/
     responseBodyCheckForAmexAddMerchant(apiResponse) {
         expect(apiResponse.status).to.equal(200);
@@ -92,6 +131,14 @@ class AmexMerchantsModule {
 
     responseBodyCheckForAmexUpdateMerchant(apiResponse) {
         expect(apiResponse.status).to.equal(200);
+    }
+
+    /*Checking the response status and body for invalid credentials */
+    responseBodyCheckForInvalidCredentials(apiResponse) {
+        expect(apiResponse.status).to.equal(401)
+        expect(apiResponse.body[0].errorCode).to.equal('104000')
+        expect(apiResponse.body[0].errorDescription).to.equal('unauthorized')
+        expect(apiResponse.body[0].errorType).to.equal('unauthorized_operation')
     }
 
     /*Comparing database record from api request values*/

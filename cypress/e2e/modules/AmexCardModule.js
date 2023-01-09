@@ -1,8 +1,10 @@
 /// <reference types="cypress" />
 
+import commonChecking from "../../common/commonChecking"
 import commonFunctions from "../../common/commonFunctions"
 import databaseCommands from "../../common/databaseCommands"
 
+const cc = new commonChecking
 const cf = new commonFunctions
 const dc = new databaseCommands
 
@@ -13,14 +15,14 @@ class AmexCardModule {
         let tokenRefId = '';
         let cardsApiId = '';
 
+        /*Initialize Masked Card number */
+        maskedCardNumber = cf.setMaskedCardNumber(cards.cardNumber);
+
         /*Get random api credentials from database */
         dc.getRandomApiCredentials().then((credentials) => {
             apiCredentialsId = credentials[0][0].value;
 
-            /*Initialize Masked Card number */
-            maskedCardNumber = cf.setMaskedCardNumber(cards.cardNumber);
-
-            /*Invoike Amex Add Card endpoint */
+            /*Invoke Amex Add Card endpoint */
             cy.invokeAmexAddCard(credentials[0][2].value, credentials[0][3].value, cards).then((apiResponse) => {
                 this.responseBodyCheckForAmexAddCard(apiResponse);
                 tokenRefId = apiResponse.body.tokenRefId;
@@ -33,7 +35,7 @@ class AmexCardModule {
 
                 if (isUpdateCard) {
                     let apiEndpoint = 'card';
-                    cy.invokeAmexUpdateCard(credentials, apiEndpoint, tokenRefId, cards.tokenStatus).then((putResponse) => {
+                    cy.invokeAmexUpdateCard(credentials[0][2].value, credentials[0][3].value, apiEndpoint, tokenRefId, cards.tokenStatus).then((putResponse) => {
                         this.responseBodyCheckForAmexUpdateCard(putResponse);
                         let getCardStatusEndpoint = 'card/' + tokenRefId + '/status';
 
@@ -58,6 +60,55 @@ class AmexCardModule {
         })
     }
 
+    addAmexCardUsingInvalidCredentials(cards) {
+        //Invoke Add Card endpoint using a null credentials
+        cy.invokeAmexAddCard(null, null, cards).then((apiResponse) => {
+            this.responseBodyCheckForInvalidCredentials(apiResponse);
+        })
+
+        //Invoke Add Card endpoint using an invalid credentials
+        cy.invokeAmexAddCard(cf.generateRandomString(7), cf.generateRandomString(7), cards).then((apiResponse) => {
+            this.responseBodyCheckForInvalidCredentials(apiResponse);
+        })
+    }
+
+    updateAmexCardUsingInvalidCredentials(tokenStatus) {
+        let apiEndpoint = 'card';
+        let tokenRefId = '';
+
+        dc.getRandomAmexCards().then((dbResponse) => {
+            tokenRefId = dbResponse[0][31].value;
+
+            //Invoke Update Card endpoint using a null credentials
+            cy.invokeAmexUpdateCard(null, null, apiEndpoint, tokenRefId, tokenStatus).then((apiResponse) => {
+                this.responseBodyCheckForInvalidCredentials(apiResponse);
+            })
+
+            //Invoke Add Card endpoint using an invalid credentials
+            cy.invokeAmexUpdateCard(cf.generateRandomString(7), cf.generateRandomString(7), apiEndpoint, tokenRefId, tokenStatus).then((apiResponse) => {
+                this.responseBodyCheckForInvalidCredentials(apiResponse);
+            })
+        })
+    }
+
+    accessCardStatusUsingInvalidCredentials(method, isGetCardStatus = false) {
+        let apiEndpoint = '';
+        let tokenRefId = '';
+
+        dc.getRandomAmexCards().then((dbResponse) => {
+            tokenRefId = dbResponse[0][31].value;
+
+            if (isGetCardStatus) {
+                apiEndpoint = 'card/' + tokenRefId + '/status';
+            }
+            else {
+                apiEndpoint = 'card/' + tokenRefId + '/metadata';
+            }
+
+            cc.invokeTargetApiEndpoint(method, apiEndpoint);
+        })
+    }
+
     /*Checking the properties of the api response body*/
     responseBodyCheckForAmexAddCard(apiResponse) {
         expect(apiResponse.status).to.equal(200)
@@ -66,6 +117,13 @@ class AmexCardModule {
         expect(apiResponse.body).to.have.property('tokenExpiryMonth')
         expect(apiResponse.body).to.have.property('tokenExpiryYear')
         expect(apiResponse.body).to.have.property('tokenRefId')
+    }
+
+    responseBodyCheckForInvalidCredentials(apiResponse) {
+        expect(apiResponse.status).to.equal(401)
+        expect(apiResponse.body[0].errorCode).to.equal('104000')
+        expect(apiResponse.body[0].errorDescription).to.equal('unauthorized')
+        expect(apiResponse.body[0].errorType).to.equal('unauthorized_operation')
     }
 
     /*Comparing database record from api request and response values*/
