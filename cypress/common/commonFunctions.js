@@ -171,9 +171,12 @@ class commonFunctions {
     generateGatewaySettlementDate() {
         let getwaySettlementDate = '';
         let date = '';
-        let aus = new Date();
-        let aus_time = aus.getUTCHours() + 11;
-
+        //let aus = new Date()
+        var aus = new Date().toLocaleDateString("en-AU", {timeZone: "Australia/Sydney"})
+        //let aus_time = aus.getUTCHours() //+ 11;
+        //let aus_time = aus.toLocaleDateString("en-AU", {timeZone: "Australia/Sydney"}).replace(/\//g, "-") + ' ' //+ somestamp.toLocaleTimeString("en-AU", {timeZone: "Australia/Sydney"});
+        let aus_time = aus.getHours();
+        cy.log('maximogwapo: ' + aus_time.toString())
         let year = aus.getFullYear();
         let month = ("0" + (aus.getMonth() + 1)).slice(-2);
         if(aus_time >= 18) {

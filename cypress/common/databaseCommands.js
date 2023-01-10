@@ -77,10 +77,17 @@ class databaseCommands {
         })
     }
 
+    /*dbo.GcagAuthorisations */
+    getGcagAuthorisationsByTransactionId(transactionId) {
+        var dbCommand = `select * from GcagAuthorisations where transactionid = '` + transactionId + `'`;
+        return cy.sqlServer(dbCommand).then((result) => {
+            return result
+        })
+    }
+
     /*dbo.Transactions*/
     getTransactionByApiId(apiId) {
-        //var dbCommand = `select * from transactions where apiid = '` + apiId + `'`;
-        var dbCommand = `select top 1 * from transactions where carddetailid is null order by id desc`;
+        var dbCommand = `select * from transactions where apiid = '` + apiId + `'`;
         return cy.sqlServer(dbCommand).then((result) => {
             return result
         })

@@ -8,8 +8,8 @@ class CardModuleConfiguration {
     Cards(cardType, tokenStatus) {
         var data = {
             cardNumber : cf.generateRandomCardNumber(cardType),
-            cardHolder : 'AmexApiAddCard_' + cf.generateRandomString(7),
-            cardHolderEmail : 'AmexApiAddCard_' + cf.generateRandomString(10) + '@paymentlogic.com.au',
+            cardHolder : 'ApiCard_' + cf.generateRandomString(7),
+            cardHolderEmail : 'ApiCard_' + cf.generateRandomString(10) + '@paymentlogic.com.au',
             countryCode : cf.generateRandomCountryCode(),
             expiryMonth : cf.generateRandomExpiryMonth(),
             expiryYear : cf.generateExpiryYear(), 

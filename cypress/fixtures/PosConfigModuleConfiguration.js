@@ -7,7 +7,7 @@ const cf = new commonFunctions
 class PosConfigModuleConfiguration {
     PosConfig() {
         var data = {
-            description : 'AmexApiAddPosConfig_' + cf.generateRandomString(7),
+            description : 'ApiPosConfig_' + cf.generateRandomString(7),
             cardInputCapability : cf.generateCardInputCapability(),
             cardholderAuthCapability : cf.generateCardInputCapability(),
             cardCaptureCapability : cf.generateCardCaptureCapability(),
