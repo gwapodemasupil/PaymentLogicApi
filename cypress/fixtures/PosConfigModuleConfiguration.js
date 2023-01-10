@@ -4,7 +4,7 @@ import commonFunctions from "../common/commonFunctions"
 
 const cf = new commonFunctions
 
-class AmexApiPosConfig {
+class PosConfigModuleConfiguration {
     PosConfig() {
         var data = {
             description : 'AmexApiAddPosConfig_' + cf.generateRandomString(7),
@@ -25,4 +25,4 @@ class AmexApiPosConfig {
     }
 }
 
-export default AmexApiPosConfig
+export default PosConfigModuleConfiguration

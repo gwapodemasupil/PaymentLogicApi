@@ -4,7 +4,7 @@ import commonFunctions from "../common/commonFunctions"
 
 const cf = new commonFunctions
 
-class AmexApiCards {
+class CardModuleConfiguration {
     Cards(cardType, tokenStatus) {
         var data = {
             cardNumber : cf.generateRandomCardNumber(cardType),
@@ -19,4 +19,4 @@ class AmexApiCards {
     }
 }
 
-export default AmexApiCards
+export default CardModuleConfiguration

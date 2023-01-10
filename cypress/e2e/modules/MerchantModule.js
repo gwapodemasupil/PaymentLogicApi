@@ -3,19 +3,19 @@
 import commonChecking from "../../common/commonChecking"
 import commonFunctions from "../../common/commonFunctions"
 import databaseCommands from "../../common/databaseCommands"
-import AmexApiMerchants from "../../fixtures/AmexApiMerchants"
+import MerchantModuleConfiguration from "../../fixtures/MerchantModuleConfiguration"
 
 const cc = new commonChecking
 const cf = new commonFunctions
 const dc = new databaseCommands
-const aam = new AmexApiMerchants
+const merchantConfig = new MerchantModuleConfiguration
 
-class AmexMerchantsModule {
-    addAmexMerchant(merchants, isUpdateMerchant = false, isGetMerchant = false, isDeleteMerchant = false) {
+class MerchantModule {
+    addMerchant(merchants, isUpdateMerchant = false, isGetMerchant = false, isDeleteMerchant = false) {
         let apiCredentialsId = '';
         let isUpdate = false;
         let apiEndpoint = '';
-        let merchantConfigId  = '';
+        let merchantConfigApiId  = '';
         let merchantId = '';
         let addressDetailId = '';
 
@@ -23,16 +23,17 @@ class AmexMerchantsModule {
         dc.getRandomApiCredentials().then((credentials) => {
             apiCredentialsId = credentials[0][0].value
 
-            /*Invoke Amex Add Merchant endpoint */
-            cy.invokeAmexAddMerchant(credentials[0][2].value, credentials[0][3].value, merchants).then((apiResponse) => {
-                this.responseBodyCheckForAmexAddMerchant(apiResponse);
-                merchantConfigId = apiResponse.body.merchantConfigId;
-                apiEndpoint = 'merchant/' + merchantConfigId;
+            /*Invoke Add Merchant endpoint */
+            cy.invokeAddMerchantEndpoint(credentials[0][2].value, credentials[0][3].value, merchants).then((apiResponse) => {
+                cc.checkResponseBodyStatus(apiResponse);
+                this.checkResponseBodyAddMerchant(apiResponse);
+                merchantConfigApiId = apiResponse.body.merchantConfigId;
+                apiEndpoint = 'merchant/' + merchantConfigApiId;
                 
                 /*Get the merchant's information added in the database */
-                dc.getAmexApiMerchantConfigByApiId(merchantConfigId).then((merchantConfig) => {
-                    this.dbCheckAmexAddMerchant(merchantConfig, merchants, apiCredentialsId, isUpdate)
-                    merchantId = merchantConfig[0][0].value;
+                dc.getAmexApiMerchantConfigByApiId(merchantConfigApiId).then((merchantDetails) => {
+                    this.dbCheckAddMerchant(merchantDetails, merchants, apiCredentialsId, isUpdate)
+                    merchantId = merchantDetails[0][0].value;
 
                     /*Get the merchant's address items added in the database */
                     dc.getAddressItems(4, merchantId).then((addressItems) => {
@@ -46,14 +47,14 @@ class AmexMerchantsModule {
                         /*Update Merchant */
                         if (isUpdateMerchant) {
                             let isUpdate = true;
-                            let newMerchant = aam.Merchants()
+                            let newMerchant = merchantConfig.Merchants()
 
-                            cy.invokeAmexAddMerchant(credentials[0][2].value, credentials[0][3].value, newMerchant, merchantConfigId).then((apiResponse) => {
-                                this.responseBodyCheckForAmexUpdateMerchant(apiResponse);
+                            cy.invokeAddMerchantEndpoint(credentials[0][2].value, credentials[0][3].value, newMerchant, merchantConfigApiId).then((apiResponse) => {
+                                cc.checkResponseBodyStatus(apiResponse);
 
                                 /*Get the merchant's information added in the database */
-                                dc.getAmexApiMerchantConfigByApiId(merchantConfigId).then((merchantConfig) => {
-                                    this.dbCheckAmexAddMerchant(merchantConfig, newMerchant, apiCredentialsId, isUpdate)
+                                dc.getAmexApiMerchantConfigByApiId(merchantConfigApiId).then((updatedMerchant) => {
+                                    this.dbCheckAddMerchant(updatedMerchant, newMerchant, apiCredentialsId, isUpdate)
                                     
                                     /*Get the merchant's address details added in the database */
                                     dc.getAddressDetails(addressDetailId).then((addressDetails) => {
@@ -65,19 +66,20 @@ class AmexMerchantsModule {
 
                         /*Get Merchant */
                         else if (isGetMerchant) {
-                            cy.invokeAmexApi(credentials[0][2].value, credentials[0][3].value, 'GET', apiEndpoint).then((apiResponse) => {
-                                this.responseBodyCheckForGetMerchant(apiResponse, merchants);
+                            cy.invokeCommonApi(credentials[0][2].value, credentials[0][3].value, 'GET', apiEndpoint).then((apiResponse) => {
+                                cc.checkResponseBodyStatus(apiResponse);
+                                this.checkResponseBodyGetMerchant(apiResponse, merchants);
                             })
                         }
 
                         /*Delete Merchant */
                         else if (isDeleteMerchant) {
-                            cy.invokeAmexApi(credentials[0][2].value, credentials[0][3].value, 'DELETE', apiEndpoint).then((apiResponse) => {
-                                this.responseBodyCheckForAmexUpdateMerchant(apiResponse);
+                            cy.invokeCommonApi(credentials[0][2].value, credentials[0][3].value, 'DELETE', apiEndpoint).then((apiResponse) => {
+                                cc.checkResponseBodyStatus(apiResponse);
 
                                 /*Get the merchant's information added in the database */
-                                dc.getAmexApiMerchantConfigByApiId(merchantConfigId).then((dbRecord) => {
-                                    this.dbCheckAmexDeleteMerchant(dbRecord);
+                                dc.getAmexApiMerchantConfigByApiId(merchantConfigApiId).then((dbRecord) => {
+                                    this.dbCheckDeleteMerchant(dbRecord);
                                 })
                             })
                         }
@@ -87,10 +89,11 @@ class AmexMerchantsModule {
         })    
     }
 
+    //Add/Update Merchant endpoint
     addMerchantUsingInvalidCredentials(merchants, isUpdateMerchant = false) {
         let merchantConfigApiId = '';
 
-        dc.getAmexApiRandomMerchantConfig().then((dbResponse) => {
+        dc.getRandomAmexApiMerchantConfig().then((dbResponse) => {
 
             if (isUpdateMerchant) {
                 merchantConfigApiId = dbResponse[0][7].value;
@@ -100,49 +103,38 @@ class AmexMerchantsModule {
             }
 
             //Invoke Add/Update Merchant endpoint using a null credentials
-            cy.invokeAmexAddMerchant(null, null, merchants, merchantConfigApiId).then((apiResponse) => {
-                this.responseBodyCheckForInvalidCredentials(apiResponse);
+            cy.invokeAddMerchantEndpoint(null, null, merchants, merchantConfigApiId).then((apiResponse) => {
+                cc.checkResponseBodyInvalidCredentials(apiResponse);
             })
 
             //Invoke Add/Update Merchant endpoint using an invalid credentials
-            cy.invokeAmexAddMerchant(cf.generateRandomString(7), cf.generateRandomString(7), merchants, merchantConfigApiId).then((apiResponse) => {
-                this.responseBodyCheckForInvalidCredentials(apiResponse);
+            cy.invokeAddMerchantEndpoint(cf.generateRandomString(7), cf.generateRandomString(7), merchants, merchantConfigApiId).then((apiResponse) => {
+                cc.checkResponseBodyInvalidCredentials(apiResponse);
             })
         })     
     }
 
+    //Get/Delete Merchant Endpoint
     accessMerchantUsingInvalidCredentials(method) {
         let apiEndpoint = '';
         let merchantConfigApiId = '';
 
-        dc.getAmexApiRandomMerchantConfig().then((dbResponse) => {
+        dc.getRandomAmexApiMerchantConfig().then((dbResponse) => {
             merchantConfigApiId = dbResponse[0][7].value
             apiEndpoint = 'merchant/' + merchantConfigApiId;
 
+            //Invoke Get/Delete Merchant endpoint using a null and invalid credentials
             cc.invokeTargetApiEndpoint(method, apiEndpoint);
         })
     }
 
     /*Checking the properties of the api response body*/
-    responseBodyCheckForAmexAddMerchant(apiResponse) {
-        expect(apiResponse.status).to.equal(200);
+    checkResponseBodyAddMerchant(apiResponse) {
         expect(apiResponse.body).to.have.property('merchantConfigId');
     }
 
-    responseBodyCheckForAmexUpdateMerchant(apiResponse) {
-        expect(apiResponse.status).to.equal(200);
-    }
-
-    /*Checking the response status and body for invalid credentials */
-    responseBodyCheckForInvalidCredentials(apiResponse) {
-        expect(apiResponse.status).to.equal(401)
-        expect(apiResponse.body[0].errorCode).to.equal('104000')
-        expect(apiResponse.body[0].errorDescription).to.equal('unauthorized')
-        expect(apiResponse.body[0].errorType).to.equal('unauthorized_operation')
-    }
-
     /*Comparing database record from api request values*/
-    dbCheckAmexAddMerchant(merchantConfig, merchants, apiCredentialsId, isUpdate) {
+    dbCheckAddMerchant(merchantConfig, merchants, apiCredentialsId, isUpdate) {
         assert.equal(merchantConfig[0][1].value, merchants.merchantCategoryCode, 'MerchantCategoryCode checking');
         if (!isUpdate) {
             assert.equal(merchantConfig[0][2].value, merchants.merchantSENumber, 'MerchantSENumber checking');
@@ -170,12 +162,11 @@ class AmexMerchantsModule {
         assert.equal(addressDetails[0][16].value, null, 'GoogleAddress checking');
     }
 
-    dbCheckAmexDeleteMerchant(merchant) {
+    dbCheckDeleteMerchant(merchant) {
         assert.equal(merchant.length, 0, 'Checking if merchant is deleted successfully.')
     }
 
-    responseBodyCheckForGetMerchant(apiResponse, merchants) {
-        expect(apiResponse.status).to.equal(200);
+    checkResponseBodyGetMerchant(apiResponse, merchants) {
         assert.equal(apiResponse.body.merchantCategoryCode, merchants.merchantCategoryCode, 'MerchantCategoryCode checking');
         assert.equal(apiResponse.body.merchantSENumber, merchants.merchantSENumber, 'MerchantSENumber checking');
         assert.equal(apiResponse.body.merchantName, merchants.merchantName, 'MerchantName checking');
@@ -189,4 +180,4 @@ class AmexMerchantsModule {
     }
 }
 
-export default AmexMerchantsModule
+export default MerchantModule

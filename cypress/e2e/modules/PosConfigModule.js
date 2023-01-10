@@ -3,18 +3,18 @@
 import commonChecking from "../../common/commonChecking"
 import commonFunctions from "../../common/commonFunctions"
 import databaseCommands from "../../common/databaseCommands"
-import AmexApiPosConfig from "../../fixtures/AmexApiPosConfig"
+import PosConfigModuleConfiguration from "../../fixtures/PosConfigModuleConfiguration"
 
 
 const cc = new commonChecking
 const cf = new commonFunctions
 const dc = new databaseCommands
-const aapc = new AmexApiPosConfig
+const posConfiguration = new PosConfigModuleConfiguration
 
-class AmexApiPosConfigModule {
-    addAmexPosConfig(posConfig, isUpdatePosConfig = false, isGetPosConfig = false, isDeletePosConfig = false) {
+class PosConfigModule {
+    addPosConfig(posConfig, isUpdatePosConfig = false, isGetPosConfig = false, isDeletePosConfig = false) {
         let apiCredentialsId = '';
-        let posConfigId = '';
+        let posConfigApiId = '';
         let apiEndpoint = '';
 
         /*Get random api credentials from database */
@@ -23,41 +23,42 @@ class AmexApiPosConfigModule {
 
             /*Invoke Add Pos Config endpoint */
             cy.invokeAddPosConfigEndpoint(credentials[0][2].value, credentials[0][3].value, posConfig).then((apiResponse) => {
-                this.responseBodyCheckforAmexAddPosConfig(apiResponse);
-                posConfigId = apiResponse.body.posConfigId;
-                apiEndpoint = '/posData/' + posConfigId;
+                cc.checkResponseBodyStatus(apiResponse);
+                this.checkResponseBodyAddPosConfig(apiResponse);
+                posConfigApiId = apiResponse.body.posConfigId;
+                apiEndpoint = '/posData/' + posConfigApiId;
                 
                 /*Get the pos config's information added in the database */
-                dc.getAmexApiPosConfigByApiId(posConfigId).then((dbResponse) => {
-                    this.dbCheckAmexAddPosConfig(dbResponse, posConfig, apiCredentialsId);
+                dc.getAmexApiPosConfigByApiId(posConfigApiId).then((dbResponse) => {
+                    this.dbCheckAddPosConfig(dbResponse, posConfig, apiCredentialsId);
                 })
 
                 /*Update Pos Config */
                 if (isUpdatePosConfig) {
-                    let newPosConfig = aapc.PosConfig();
-                    cy.invokeAddPosConfigEndpoint(credentials[0][2].value, credentials[0][3].value, newPosConfig, posConfigId).then((apiResponse) => {
-                        this.responseBodyCheckForAmexUpdatePosConfig(apiResponse);
+                    let newPosConfig = posConfiguration.PosConfig();
+                    cy.invokeAddPosConfigEndpoint(credentials[0][2].value, credentials[0][3].value, newPosConfig, posConfigApiId).then((apiResponse) => {
+                        cc.checkResponseBodyStatus(apiResponse);
 
-                        dc.getAmexApiPosConfigByApiId(posConfigId).then((dbResponse) => {
-                            this.dbCheckAmexAddPosConfig(dbResponse, newPosConfig, apiCredentialsId);
+                        dc.getAmexApiPosConfigByApiId(posConfigApiId).then((dbResponse) => {
+                            this.dbCheckAddPosConfig(dbResponse, newPosConfig, apiCredentialsId);
                         })
                     })
                 }
 
                 /*Get Pos Config*/
                 else if (isGetPosConfig) {
-                    cy.invokeAmexApi(credentials[0][2].value, credentials[0][3].value, 'GET', apiEndpoint).then((apiResponse) => {
-                        this.responseBodyCheckForGetPosConfig(apiResponse, posConfig)
+                    cy.invokeCommonApi(credentials[0][2].value, credentials[0][3].value, 'GET', apiEndpoint).then((apiResponse) => {
+                        this.checkResponseBodyGetPosConfig(apiResponse, posConfig)
                     })
                 }
 
                 /*Delete Pos Config*/
                 else if (isDeletePosConfig) {
-                    cy.invokeAmexApi(credentials[0][2].value, credentials[0][3].value, 'DELETE', apiEndpoint).then((apiResponse) => {
-                        this.responseBodyCheckForAmexUpdatePosConfig(apiResponse);
+                    cy.invokeCommonApi(credentials[0][2].value, credentials[0][3].value, 'DELETE', apiEndpoint).then((apiResponse) => {
+                        cc.checkResponseBodyStatus(apiResponse);
 
-                        dc.getAmexApiPosConfigByApiId(posConfigId).then((dbResponse) => {
-                            this.dbCheckAmexDeletePosConfig(dbResponse)
+                        dc.getAmexApiPosConfigByApiId(posConfigApiId).then((dbResponse) => {
+                            this.dbCheckDeletePosConfig(dbResponse)
                         })
                     })
                 }
@@ -65,10 +66,11 @@ class AmexApiPosConfigModule {
         })
     }
 
+    //Add/Update POS Config endpoint
     addPosConfigUsingInvalidCredentials(posConfig, isUpdatePosConfig = false) {
         let posConfigApiId = '';
 
-        dc.getAmexApiRandomPosConfig().then((dbResponse) => {
+        dc.getRandomAmexApiPosConfig().then((dbResponse) => {
 
             if (isUpdatePosConfig) {
                 posConfigApiId = dbResponse[0][15].value;
@@ -80,21 +82,22 @@ class AmexApiPosConfigModule {
 
             //Invoke Add/Update Pos Config endpoint using a null credentials
             cy.invokeAddPosConfigEndpoint(null, null, posConfig, posConfigApiId).then((apiResponse) => {
-                cc.responseBodyCheckForInvalidCredentials(apiResponse);
+                cc.checkResponseBodyInvalidCredentials(apiResponse);
             })
 
             //Invoke Add/Update Pos Config endpoint using an invalid credentials
             cy.invokeAddPosConfigEndpoint(cf.generateRandomString(7), cf.generateRandomString(7), posConfig, posConfigApiId).then((apiResponse) => {
-                cc.responseBodyCheckForInvalidCredentials(apiResponse);
+                cc.checkResponseBodyInvalidCredentials(apiResponse);
             })
         })
     }
 
+    //Get/Delete POS Config endpoint
     accessPosConfigUsingInvalidCredentials(method) {
         let apiEndpoint = '';
         let posConfigApiId = '';
 
-        dc.getAmexApiRandomPosConfig().then((dbResponse) => {
+        dc.getRandomAmexApiPosConfig().then((dbResponse) => {
             posConfigApiId = dbResponse[0][15].value
             apiEndpoint = 'posData/' + posConfigApiId;
 
@@ -102,16 +105,12 @@ class AmexApiPosConfigModule {
         })
     }
 
-    responseBodyCheckforAmexAddPosConfig(apiResponse) {
-        expect(apiResponse.status).to.equal(200);
+    checkResponseBodyAddPosConfig(apiResponse) {
         expect(apiResponse.body).to.have.property('posConfigId');
     }
 
-    responseBodyCheckForAmexUpdatePosConfig(apiResponse) {
-        expect(apiResponse.status).to.equal(200);
-    }
 
-    dbCheckAmexAddPosConfig(dbResponse, posConfig, apiCredentialsId) {
+    dbCheckAddPosConfig(dbResponse, posConfig, apiCredentialsId) {
         assert.equal(dbResponse[0][1].value, posConfig.description, 'Description checking');
         assert.equal(dbResponse[0][2].value, posConfig.cardInputCapability, 'CardInputCapability checking');
         assert.equal(dbResponse[0][3].value, posConfig.cardholderAuthCapability, 'CardholderAuthCapability checking');
@@ -129,7 +128,7 @@ class AmexApiPosConfigModule {
         assert.equal(dbResponse[0][16].value, true, 'IsActive checking');
     }
 
-    responseBodyCheckForGetPosConfig(apiResponse, posConfig) {
+    checkResponseBodyGetPosConfig(apiResponse, posConfig) {
         expect(apiResponse.status).to.equal(200);
         assert.equal(apiResponse.body.description, posConfig.description, 'Description checking');
         assert.equal(apiResponse.body.cardInputCapability, posConfig.cardInputCapability, 'CardInputCapability checking');
@@ -146,9 +145,9 @@ class AmexApiPosConfigModule {
         assert.equal(apiResponse.body.pinCaptureCapability, posConfig.pinCaptureCapability, 'PinCaptureCapability checking');
     }
 
-    dbCheckAmexDeletePosConfig(posConfig) {
+    dbCheckDeletePosConfig(posConfig) {
         assert.equal(posConfig.length, 0, 'Checking if pos config is deleted successfully.')
     }
 }
 
-export default AmexApiPosConfigModule
+export default PosConfigModule

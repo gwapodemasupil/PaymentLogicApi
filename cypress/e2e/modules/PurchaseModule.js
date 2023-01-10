@@ -1,11 +1,13 @@
+import commonChecking from "../../common/commonChecking"
 import commonFunctions from "../../common/commonFunctions"
 import databaseCommands from "../../common/databaseCommands"
 
+const cc = new commonChecking
 const cf = new commonFunctions
 const dc = new databaseCommands
 
-class AmexPurchaseModule {
-    amexPurchase(purchaseDetails) {
+class PurchaseModule {
+    purchase(purchaseDetails) {
         let apiCredentialsId = '';
         let posConfigApiId = '';
         let merchantConfigApiId = '';
@@ -15,16 +17,16 @@ class AmexPurchaseModule {
         dc.getRandomApiCredentials().then((credentials) => {
             apiCredentialsId = credentials[0][0].value;
             
-
-            dc.getAmexApiRandomPosConfig().then((posConfigResult) => {
+            dc.getRandomAmexApiPosConfig().then((posConfigResult) => {
                 posConfigApiId = posConfigResult[0][15].value;
 
-                dc.getAmexApiRandomMerchantConfig().then((merchConfigResult) => {
+                dc.getRandomAmexApiMerchantConfig().then((merchConfigResult) => {
                     merchantConfigApiId = merchConfigResult[0][7].value;
 
-                    cy.invokeAmexPurchase(credentials, purchaseDetails, posConfigApiId, merchantConfigApiId).then((apiResponse) => {
+                    cy.invokePurchaseEndpoint(credentials, purchaseDetails, posConfigApiId, merchantConfigApiId).then((apiResponse) => {
                         //transactionApiId = apiResponse.body.transactionId;
-                        this.responseBodyCheckforPurchase(apiResponse);
+                        cc.checkResponseBodyStatus(apiResponse);
+                        this.checkResponseBodyPurchase(apiResponse);
 
                         //dc.getTransactionByApiId(transactionApiId).then((dbTransaction) => {
                         dc.getTransactionByApiId().then((dbTransaction) => {
@@ -37,7 +39,7 @@ class AmexPurchaseModule {
         })
     }
 
-    responseBodyCheckforPurchase(apiResponse) {
+    checkResponseBodyPurchase(apiResponse) {
         expect(apiResponse.status).to.equal(200)
         expect(apiResponse.body).to.have.property('responseCode')
         expect(apiResponse.body).to.have.property('amount')
@@ -68,4 +70,4 @@ class AmexPurchaseModule {
     }
 }
 
-export default AmexPurchaseModule
+export default PurchaseModule

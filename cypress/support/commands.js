@@ -67,7 +67,22 @@ Cypress.Commands.add('sqlServer', (query) => {
     });
 });
 
-Cypress.Commands.add('invokeAmexAddCard', (clientId, clientSecret, cards) => {
+Cypress.Commands.add('invokeCommonApi', (clientId, clientSecret, method, apiEndpoint) => {
+    return cy.request({
+        method: method,
+        url: Cypress.env('baseUrl') + apiEndpoint,
+        failOnStatusCode: false,
+        headers: {
+            'client-id': clientId,
+            'client-secret' : clientSecret,
+            'host': Cypress.env('hostServices')
+        }
+    }).then((response) => {
+        return response
+    })
+})
+
+Cypress.Commands.add('invokeAddCardEndpoint', (clientId, clientSecret, cards) => {
     return cy.request({
         method: 'POST',
         url: Cypress.env('baseUrl') + 'card/tokenise',
@@ -90,7 +105,7 @@ Cypress.Commands.add('invokeAmexAddCard', (clientId, clientSecret, cards) => {
     })
 })
 
-Cypress.Commands.add('invokeAmexUpdateCard', (clientId, clientSecret, apiEndpoint, tokenRefId, tokenStatus) => {
+Cypress.Commands.add('invokeUpdateCardEndpoint', (clientId, clientSecret, apiEndpoint, tokenRefId, tokenStatus) => {
     return cy.request({
         method: 'PUT',
         url: Cypress.env('baseUrl') + apiEndpoint,
@@ -107,7 +122,7 @@ Cypress.Commands.add('invokeAmexUpdateCard', (clientId, clientSecret, apiEndpoin
     })
 })
 
-Cypress.Commands.add('invokeAmexAddMerchant', (clientId, clientSecret, merchants, merchantConfigApiId) => {
+Cypress.Commands.add('invokeAddMerchantEndpoint', (clientId, clientSecret, merchants, merchantConfigApiId) => {
     let endpoint = '';
     let requestMethod = '';
 
@@ -145,21 +160,6 @@ Cypress.Commands.add('invokeAmexAddMerchant', (clientId, clientSecret, merchants
             merchantRegionCode: merchants.merchantRegionCode
         },
         
-    }).then((response) => {
-        return response
-    })
-})
-
-Cypress.Commands.add('invokeAmexApi', (clientId, clientSecret, method, apiEndpoint) => {
-    return cy.request({
-        method: method,
-        url: Cypress.env('baseUrl') + apiEndpoint,
-        failOnStatusCode: false,
-        headers: {
-            'client-id': clientId,
-            'client-secret' : clientSecret,
-            'host': Cypress.env('hostServices')
-        }
     }).then((response) => {
         return response
     })
@@ -212,38 +212,8 @@ Cypress.Commands.add('invokeAddPosConfigEndpoint', (clientId, clientSecret, posC
     })
 })
 
-/*Cypress.Commands.add('invokeAmexUpdatePosConfig', (clientId, clientSecret, posConfig, posConfigId) => {
-    return cy.request({
-        method: 'PUT',
-        url: Cypress.env('baseUrl') + 'posData/' + posConfigId,
-        failOnStatusCode: false,
-        headers: {
-            'client-id': clientId,
-            'client-secret' : clientSecret,
-            'host': Cypress.env('hostServices')
-        },
-        body: {
-            description : posConfig.description,
-            cardInputCapability : posConfig.cardInputCapability,
-            cardholderAuthCapability : posConfig.cardholderAuthCapability,
-            cardCaptureCapability : posConfig.cardCaptureCapability,
-            operatingEnvironment : posConfig.operatingEnvironment,
-            cardholderPresent : posConfig.cardholderPresent,
-            cardPresent: posConfig.cardPresent,
-            cardDataInputMode: posConfig.cardDataInputMode,
-            cardmemberAuthMethod: posConfig.cardmemberAuthMethod,
-            cardmemberAuthEntity: posConfig.cardmemberAuthEntity,
-            cardDataOutputCapability: posConfig.cardDataOutputCapability,
-            terminalOutputCapability: posConfig.terminalOutputCapability,
-            pinCaptureCapability: posConfig.pinCaptureCapability
-        },
-        
-    }).then((response) => {
-        return response
-    })
-})*/
 
-Cypress.Commands.add('invokeAmexPurchase', (apiCredentials, purchaseDetails, posConfigApiId, merchantConfigApiId) => {
+Cypress.Commands.add('invokePurchaseEndpoint', (apiCredentials, purchaseDetails, posConfigApiId, merchantConfigApiId) => {
     return cy.request({
         method: 'POST',
         url: Cypress.env('baseUrl') + 'purchase',

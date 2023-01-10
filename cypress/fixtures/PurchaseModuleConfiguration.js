@@ -4,7 +4,7 @@ import commonFunctions from "../common/commonFunctions"
 
 const cf = new commonFunctions
 
-class AmexApiPurchase {
+class PurchaseModuleConfiguration {
     Purchase(cardType) {
         var data = {
             //posConfigId: 'e32c258b-2763-433d-bdf0-46c720341f53',
@@ -48,4 +48,4 @@ class AmexApiPurchase {
     }
 }
 
-export default AmexApiPurchase
+export default PurchaseModuleConfiguration

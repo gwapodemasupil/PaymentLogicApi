@@ -25,7 +25,7 @@ class databaseCommands {
         })
     }
 
-    getAmexApiRandomMerchantConfig(credentialId = '3') {
+    getRandomAmexApiMerchantConfig(credentialId = '3') {
         var dbCommand = `select top 1 * from AmexApiMerchantConfig where ApiCredentialsId = '` + credentialId + `'` + ` and isActive = 1 order by newid()`;
         return cy.sqlServer(dbCommand).then((result) => {
             return result
@@ -40,7 +40,7 @@ class databaseCommands {
         })
     }
 
-    getAmexApiRandomPosConfig(credentialId = '3') {
+    getRandomAmexApiPosConfig(credentialId = '3') {
         var dbCommand = `select top 1 * from AmexApiPosConfig where ApiCredentialsId = '` + credentialId + `'` + ` and isActive = 1 order by newid()`;
         return cy.sqlServer(dbCommand).then((result) => {
             return result
@@ -70,7 +70,7 @@ class databaseCommands {
         })
     }
 
-    getRandomAmexCards(cardType = 'Amex', credentialId = '3') {
+    getRandomCards(cardType = 'Amex', credentialId = '3') {
         var dbCommand = `select top 1 * from cards where cardTypeCode = '` + cardType + `'` + `and apicredentialId = '` + credentialId + `'` + `order by newid()`;
         return cy.sqlServer(dbCommand).then((result) => {
             return result

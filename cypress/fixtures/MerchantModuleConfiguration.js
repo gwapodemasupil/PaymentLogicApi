@@ -4,7 +4,7 @@ import commonFunctions from "../common/commonFunctions"
 
 const cf = new commonFunctions
 
-class AmexApiMerchants {
+class MerchantModuleConfiguration {
     Merchants() {
         var data = {
             merchantCategoryCode : cf.generateRandomNumbers(4),
@@ -22,4 +22,4 @@ class AmexApiMerchants {
     }
 }
 
-export default AmexApiMerchants
+export default MerchantModuleConfiguration
