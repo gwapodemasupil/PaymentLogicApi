@@ -23,6 +23,11 @@ const posConfigModuleConfiguration = new PosConfigModuleConfiguration
 const purchaseModule = new PurchaseModule
 const purchaseModuleConfiguration = new PurchaseModuleConfiguration
 
+/*Delete after test*/
+import commonWebActions from "../common/commonWebActions"
+const cwa = new commonWebActions
+
+
 describe('01_Amex API Card Module', () => {
     it('01-01 verify that it can successfully add Amex Card using a valid credentials', () => {
       const cardType = 'amex'
@@ -163,10 +168,16 @@ describe('03_AMEX API Pos Config Module', () => {
     })
 })
 
-describe.only('04_AMEX API Purchase Module', () => {
-    it('01 - verify that it can successfully perform payment', () => {
+describe('04_AMEX API Purchase Module', () => {
+    it.only('01 - verify that it can successfully perform payment', () => {
       const cardType = 'amex'
       const purchaseDetails = purchaseModuleConfiguration.Purchase(cardType);
+      cwa.launchPaymentLogicPage();
       purchaseModule.purchase(purchaseDetails);
     })
+    it('test', () => {
+      cwa.launchPaymentLogicPage();
+      cwa.processDataCaptureRequest();
+    })
+
 })

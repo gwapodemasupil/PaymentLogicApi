@@ -171,15 +171,11 @@ class commonFunctions {
     generateGatewaySettlementDate() {
         let getwaySettlementDate = '';
         let date = '';
-        //let aus = new Date()
-        var aus = new Date().toLocaleDateString("en-AU", {timeZone: "Australia/Sydney"})
-        //let aus_time = aus.getUTCHours() //+ 11;
-        //let aus_time = aus.toLocaleDateString("en-AU", {timeZone: "Australia/Sydney"}).replace(/\//g, "-") + ' ' //+ somestamp.toLocaleTimeString("en-AU", {timeZone: "Australia/Sydney"});
-        let aus_time = aus.getHours();
-        cy.log('maximogwapo: ' + aus_time.toString())
+        let aus = new Date();
+        let ausTime = aus.getUTCHours() + 11;
         let year = aus.getFullYear();
         let month = ("0" + (aus.getMonth() + 1)).slice(-2);
-        if(aus_time >= 18) {
+        if(ausTime >= 18) {
             date = ("0" + (aus.getDate()+ 1)).slice(-2);
         }
         else {
@@ -196,7 +192,7 @@ class commonFunctions {
 
         let year = aus.getFullYear();
         let month = ("0" + (aus.getMonth() + 1)).slice(-2);
-        let date =  ("0" + aus.getDate()).slice(-2);
+        let date =  ("0" + aus.getUTCDate()).slice(-2);
         return authorisationDate = year + "-" + month + "-" + date;
     }
 }

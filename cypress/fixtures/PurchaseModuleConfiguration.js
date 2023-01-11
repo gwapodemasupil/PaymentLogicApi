@@ -42,7 +42,9 @@ class PurchaseModuleConfiguration {
             },
             responseCode: '000',
             getwaySettlementDate: cf.generateGatewaySettlementDate(),
-            getAuthorisationDate: cf.generateAuthorisationDate()
+            getAuthorisationDate: cf.generateAuthorisationDate(),
+            plAdminUser: 'AutoUser1',
+            plAdminPassword: 'test1234',
         }
         return data
     }

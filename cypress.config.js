@@ -11,6 +11,7 @@ module.exports = defineConfig({
   },
   env: {
     baseUrl: "https://stage-amexapi.paymentlogic.com.au/",
+    webBaseUrl: "https://stage-web.paymentlogic.com.au/",
     hostServices: "stage-amexapi.paymentlogic.com.au",
     db: {
       userName: "sql_Arvin",

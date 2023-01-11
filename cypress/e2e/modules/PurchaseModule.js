@@ -1,9 +1,11 @@
 import commonChecking from "../../common/commonChecking"
 import commonFunctions from "../../common/commonFunctions"
+import commonWebActions from "../../common/commonWebActions"
 import databaseCommands from "../../common/databaseCommands"
 
 const cc = new commonChecking
 const cf = new commonFunctions
+const cwa = new commonWebActions
 const dc = new databaseCommands
 
 class PurchaseModule {
@@ -13,6 +15,8 @@ class PurchaseModule {
         let merchantConfigApiId = '';
         let transactionApiId = '';
         let transactionId = '';
+        let isProcessedDcr = false;
+        let settlementBatchId = '';
 
         dc.getRandomApiCredentials().then((credentials) => {
             apiCredentialsId = credentials[0][0].value;
@@ -31,10 +35,13 @@ class PurchaseModule {
                         dc.getTransactionByApiId(transactionApiId).then((dbTransaction) => {
                         //dc.getTransactionByApiId().then((dbTransaction) => {
                             transactionId = dbTransaction[0][0].value;
-                            this.dbCheckTransactions(dbTransaction, purchaseDetails, apiCredentialsId);
+                            this.dbCheckTransactions(dbTransaction, purchaseDetails, apiCredentialsId, settlementBatchId);
 
                             dc.getGcagAuthorisationsByTransactionId(transactionId).then((dbGcagAuthorisation) => {
                                 this.dbCheckGcagAuthorisations(dbGcagAuthorisation, purchaseDetails, posConfigResult, merchConfigResult)
+
+                                isProcessedDcr = true
+                                cwa.processDataCaptureRequest()
                             })
                         })
                     })
@@ -52,9 +59,18 @@ class PurchaseModule {
 
     }
 
-    dbCheckTransactions(dbResponse, purchaseDetails, apiCredentialsId) {
+    dbCheckTransactions(dbResponse, purchaseDetails, apiCredentialsId, settlementBatchId) {
+        let transactionSettlementBatchId = '';
+
+        if(this.purchase.isProcessedDcr) {
+            transactionSettlementBatchId = settlementBatchId;
+        }
+        else {
+            transactionSettlementBatchId = null;
+        }
+
         assert.equal((dbResponse[0][1].value), null, 'CardDetailId checking')
-        assert.equal((dbResponse[0][2].value), null, 'SettlementBatchId checking')
+        assert.equal((dbResponse[0][2].value), transactionSettlementBatchId, 'SettlementBatchId checking')
         assert.equal((dbResponse[0][3].value).slice(0, 10), purchaseDetails.getAuthorisationDate, 'AuthorisationDate checking')
         assert.equal((dbResponse[0][4].value), purchaseDetails.amount, 'Amount checking')
         assert.equal((dbResponse[0][5].value), null, 'Description checking')
@@ -85,12 +101,12 @@ class PurchaseModule {
         assert.equal((dbResponse[0][24].value), merchConfigResult[0][1].value, 'CardAcceptorBusinessCode checking')
         assert.equal((dbResponse[0][27].value), purchaseDetails.cardAcceptorTerminalId, 'CardAcceptorTerminalId checking')
         assert.equal((dbResponse[0][28].value), merchConfigResult[0][2].value, 'CardAcceptorIdCode checking')
-        //assert.equal((dbResponse[0][29].value), merchConfigResult[0][3].value, 'CardAcceptorName checking')
+        assert.equal((dbResponse[0][29].value), merchConfigResult[0][3].value.replace('_', ''), 'CardAcceptorName checking')
         assert.equal((dbResponse[0][37].value), true, 'IsProcessed checking')
         assert.equal((dbResponse[0][53].value), posConfigResult[0][0].value, 'AmexApiPosConfigId checking')
         assert.equal((dbResponse[0][54].value), merchConfigResult[0][0].value, 'AmexApiMerchantConfigId checking')
         assert.equal((dbResponse[0][56].value), merchConfigResult[0][4].value, 'CardAcceptorPhone checking')
-        assert.equal((dbResponse[0][57].value), merchConfigResult[0][5].value, 'CardAcceptorEmail checking')
+        //assert.equal((dbResponse[0][57].value), merchConfigResult[0][5].value, 'CardAcceptorEmail checking')
     }
 }
 

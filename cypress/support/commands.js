@@ -263,3 +263,17 @@ Cypress.Commands.add('invokePurchaseEndpoint', (apiCredentials, purchaseDetails,
         return response
     })
 })
+
+Cypress.Commands.add('webLogin', (email, password, smsCode) => {
+    //Login Page
+    cy.get('input[id="UserName"]').clear().type(email);
+    cy.get('input[id="Password"]').clear().type(password);
+    cy.get('button[class="btn btn-rounded btn-lg btn-primary btn-block"]').click();
+
+    //MFA Page
+    cy.wait(5000);
+    cy.get('div[class="navbar-brand large block m-t theme"]').click();
+    cy.get('input[class="form-control text-center ng-pristine ng-valid ng-empty ng-valid-maxlength ng-touched"]').type(smsCode);
+    cy.get('button[type="submit"]').click();
+    cy.wait(10000);
+})
