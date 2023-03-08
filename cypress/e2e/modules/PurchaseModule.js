@@ -2,11 +2,13 @@ import commonChecking from "../../common/commonChecking"
 import commonFunctions from "../../common/commonFunctions"
 import commonWebActions from "../../common/commonWebActions"
 import databaseCommands from "../../common/databaseCommands"
+import resourceData from "../../common/resourceData"
 
 const cc = new commonChecking
 const cf = new commonFunctions
 const cwa = new commonWebActions
 const dc = new databaseCommands
+const rd = new resourceData
 
 class PurchaseModule {
     purchase(purchaseDetails) {
@@ -15,8 +17,9 @@ class PurchaseModule {
         let merchantConfigApiId = '';
         let transactionApiId = '';
         let transactionId = '';
-        let isProcessedDcr = false;
-        let settlementBatchId = '';
+        let settlementBatchId = null;
+        let expectedSystemJobStatus = 'Completed';
+        let systemJobId = '';
 
         dc.getRandomApiCredentials().then((credentials) => {
             apiCredentialsId = credentials[0][0].value;
@@ -27,21 +30,32 @@ class PurchaseModule {
                 dc.getRandomAmexApiMerchantConfig().then((merchConfigResult) => {
                     merchantConfigApiId = merchConfigResult[0][7].value;
 
-                    cy.invokePurchaseEndpoint(credentials, purchaseDetails, posConfigApiId, merchantConfigApiId).then((apiResponse) => {
+                    cy.invokePurchaseEndpoint(credentials[0][2].value, credentials[0][3].value, purchaseDetails, posConfigApiId, merchantConfigApiId).then((apiResponse) => {
                         transactionApiId = apiResponse.body.transactionId;
                         cc.checkResponseBodyStatus(apiResponse);
                         this.checkResponseBodyPurchase(apiResponse);
 
                         dc.getTransactionByApiId(transactionApiId).then((dbTransaction) => {
-                        //dc.getTransactionByApiId().then((dbTransaction) => {
                             transactionId = dbTransaction[0][0].value;
                             this.dbCheckTransactions(dbTransaction, purchaseDetails, apiCredentialsId, settlementBatchId);
 
                             dc.getGcagAuthorisationsByTransactionId(transactionId).then((dbGcagAuthorisation) => {
                                 this.dbCheckGcagAuthorisations(dbGcagAuthorisation, purchaseDetails, posConfigResult, merchConfigResult)
 
-                                isProcessedDcr = true
-                                cwa.processDataCaptureRequest()
+                                cwa.processDataCaptureRequest();
+                                dc.getSystemJob(4).then((systemJob) => {
+                                    systemJobId = systemJob[0][0].value
+                                    cy.wait(50000);
+                                    dc.getSystemJobId(systemJobId).then((systemJobId) => {
+                                        if(systemJobId[0][2].value != expectedSystemJobStatus) {
+                                            throw new Error(rd.incorrectSystemJobStatus);
+                                        }
+                                        dc.getTransactionByApiId(transactionApiId).then((dbTransaction) => {
+                                            settlementBatchId = dbTransaction[0][2].value
+                                            this.dbCheckTransactions(dbTransaction, purchaseDetails, apiCredentialsId, settlementBatchId);
+                                        })
+                                    })
+                                })
                             })
                         })
                     })
@@ -60,17 +74,8 @@ class PurchaseModule {
     }
 
     dbCheckTransactions(dbResponse, purchaseDetails, apiCredentialsId, settlementBatchId) {
-        let transactionSettlementBatchId = '';
-
-        if(this.purchase.isProcessedDcr) {
-            transactionSettlementBatchId = settlementBatchId;
-        }
-        else {
-            transactionSettlementBatchId = null;
-        }
-
         assert.equal((dbResponse[0][1].value), null, 'CardDetailId checking')
-        assert.equal((dbResponse[0][2].value), transactionSettlementBatchId, 'SettlementBatchId checking')
+        assert.equal((dbResponse[0][2].value), settlementBatchId, 'SettlementBatchId checking')
         assert.equal((dbResponse[0][3].value).slice(0, 10), purchaseDetails.getAuthorisationDate, 'AuthorisationDate checking')
         assert.equal((dbResponse[0][4].value), purchaseDetails.amount, 'Amount checking')
         assert.equal((dbResponse[0][5].value), null, 'Description checking')

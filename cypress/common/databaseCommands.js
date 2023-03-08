@@ -85,6 +85,29 @@ class databaseCommands {
         })
     }
 
+    /*dbo.Merchants*/
+    getRandomMerchant() {
+        var dbCommand = `select top 1 * from merchants where isActive = 1 order by newid()`;
+        return cy.sqlServer(dbCommand).then((result) => {
+            return result
+        })
+    }
+
+    /*dbo.SystemJobs*/
+    getSystemJob(systemJobTypeId) {
+        var dbCommand = `select top 1 * from SystemJobs where jobTypeId = '` + systemJobTypeId + `'` + ` order by id desc`;
+        return cy.sqlServer(dbCommand).then((result) => {
+            return result
+        })
+    }
+
+    getSystemJobId(systemJobId) {
+        var dbCommand = `select top 1 * from SystemJobs where id = '`+ systemJobId + `'` + ` order by id desc`;
+        return cy.sqlServer(dbCommand).then((result) => {
+            return result
+        })
+    }
+
     /*dbo.Transactions*/
     getTransactionByApiId(apiId) {
         var dbCommand = `select * from transactions where apiid = '` + apiId + `'`;

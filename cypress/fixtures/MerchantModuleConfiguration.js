@@ -5,10 +5,10 @@ import commonFunctions from "../common/commonFunctions"
 const cf = new commonFunctions
 
 class MerchantModuleConfiguration {
-    Merchants() {
+    Merchants(merchantAccountCode) {
         var data = {
             merchantCategoryCode : cf.generateRandomNumbers(4),
-            merchantSENumber : cf.generateRandomNumbers(10),
+            merchantSENumber : merchantAccountCode,
             merchantName : 'ApiMerchant_' + cf.generateRandomString(7),
             merchantCountryCode : cf.generateRandomCountryCode(),
             merchantPhone : "0400111222",

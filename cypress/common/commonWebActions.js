@@ -44,7 +44,8 @@ class commonWebActions {
         cy.wait(5000);
         cy.get(rd.buttonProcessDailyAmexBatch).click();
         cy.wait(3000);
-        cy.get(rd.buttonProcessDailyAmexBatchYes).click()
+        cy.get(rd.buttonProcessDailyAmexBatchYes).click();
+        cy.wait(3000);
     }
 }
 

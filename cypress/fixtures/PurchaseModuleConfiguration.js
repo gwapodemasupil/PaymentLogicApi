@@ -20,7 +20,6 @@ class PurchaseModuleConfiguration {
             currency: 'AUD',
             track1Data: cf.generateRandomNumbers(6),
             track2Data: cf.generateRandomNumbers(6),
-            iccData: cf.generateRandomNumbers(6),
             customerData: {
                 cardmemberFirstName: 'ApiPurchase_cardmemberFirstName_' + cf.generateRandomString(4),
                 cardmemberLastName: 'ApiPurchase_cardmemberLastName_' + cf.generateRandomString(4),

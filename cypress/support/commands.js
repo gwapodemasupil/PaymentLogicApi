@@ -213,14 +213,14 @@ Cypress.Commands.add('invokeAddPosConfigEndpoint', (clientId, clientSecret, posC
 })
 
 
-Cypress.Commands.add('invokePurchaseEndpoint', (apiCredentials, purchaseDetails, posConfigApiId, merchantConfigApiId) => {
+Cypress.Commands.add('invokePurchaseEndpoint', (clientId, clientSecret, purchaseDetails, posConfigApiId, merchantConfigApiId) => {
     return cy.request({
         method: 'POST',
         url: Cypress.env('baseUrl') + 'purchase',
         failOnStatusCode: false,
         headers: {
-            'client-id': apiCredentials[0][2].value,
-            'client-secret' : apiCredentials[0][3].value,
+            'client-id': clientId,
+            'client-secret' : clientSecret,
             'host': Cypress.env('hostServices')
         },
         body: {

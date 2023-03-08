@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-class resourcedata {
+class resourceData {
 
     plAdminUser = 'AutoUser1';
     plAdminPassword = 'test1234';
@@ -23,6 +23,9 @@ class resourcedata {
     buttonProcessDailyAmexBatch = 'button[class="btn-addon btn btn-wlth btn-success play ng-scope"]';
     buttonProcessDailyAmexBatchYes = 'button[class="btn btn-success btn-rounded"]'; 
 
+    //Purchase
+    incorrectSystemJobStatus = 'The System Job status is not set to Completed.';
+
 }
 
-export default resourcedata
+export default resourceData
