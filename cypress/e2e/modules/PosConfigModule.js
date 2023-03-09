@@ -17,6 +17,8 @@ class PosConfigModule {
         let posConfigApiId = '';
         let apiEndpoint = '';
 
+        cy.log('maximog gwapo : ' + posConfig.cardMemberAuthMethod);
+
         /*Get random api credentials from database */
         dc.getRandomApiCredentials().then((credentials) => {
             apiCredentialsId = credentials[0][0].value;
@@ -136,10 +138,9 @@ class PosConfigModule {
         assert.equal(apiResponse.body.cardCaptureCapability, posConfig.cardCaptureCapability, 'CardCaptureCapability checking');
         assert.equal(apiResponse.body.operatingEnvironment, posConfig.operatingEnvironment, 'OperatingEnvironment checking');
         assert.equal(apiResponse.body.cardholderPresent, posConfig.cardholderPresent, 'CardholderPresent checking');
-        assert.equal(apiResponse.body.cardDataInputMode, posConfig.cardDataInputMode, 'CardPresent checking');
-        assert.equal(apiResponse.body.cardMemberAuthMethod, posConfig.cardMemberAuthMethod, 'CardDataInputMode checking');
-        assert.equal(apiResponse.body.cardMemberAuthEntity, posConfig.cardMemberAuthEntity, 'cardMemberAuthMethod checking');
-        assert.equal(apiResponse.body.cardMemberAuthEntity, posConfig.cardMemberAuthEntity, 'cardMemberAuthEntity checking');
+        assert.equal(apiResponse.body.cardDataInputMode, posConfig.cardDataInputMode, 'CardDataInput Mode checking');
+        assert.equal(apiResponse.body.cardmemberAuthMethod, posConfig.cardMemberAuthMethod, 'CardMemberAuthMethod checking');
+        assert.equal(apiResponse.body.cardmemberAuthEntity, posConfig.cardMemberAuthEntity, 'CardMemberAuthEntity checking');
         assert.equal(apiResponse.body.cardDataOutputCapability, posConfig.cardDataOutputCapability, 'CardDataOutputCapability checking');
         assert.equal(apiResponse.body.terminalOutputCapability, posConfig.terminalOutputCapability, 'TerminalOutputCapability checking');
         assert.equal(apiResponse.body.pinCaptureCapability, posConfig.pinCaptureCapability, 'PinCaptureCapability checking');

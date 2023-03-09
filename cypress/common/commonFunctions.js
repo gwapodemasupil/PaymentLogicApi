@@ -126,13 +126,13 @@ class commonFunctions {
         return cardData = cardDataList[(Math.random() * cardDataList.length) | 0]
     }
 
-    generatecardMemberAuthMethod() {
+    generateCardMemberAuthMethod() {
         var cardMemberAuth = ''
         var cardMemberAuthList = ['0', '1', '5', '6', 'S']
         return cardMemberAuth = cardMemberAuthList[(Math.random() * cardMemberAuthList.length) | 0]
     }
 
-    generatecardMemberAuthEntity() {
+    generateCardMemberAuthEntity() {
         var cardMemberAuth = ''
         var cardMemberAuthList = ['0', '1', '2', '3', '4', '5']
         return cardMemberAuth = cardMemberAuthList[(Math.random() * cardMemberAuthList.length) | 0]

@@ -84,7 +84,7 @@ describe('01_Amex API Card Module', () => {
 })
 
 describe('02_Amex API Merchant Module', () => {
-    it('01-01 - verify that it can successfully add Merchant using a valid credentials', () => {
+    it.only('01-01 - verify that it can successfully add Merchant using a valid credentials', () => {
       dc.getRandomMerchant().then((dbResult) => {
         const merchant = merchantModuleConfig.Merchants(dbResult[0][2].value);
         merchantModule.addMerchant(merchant);

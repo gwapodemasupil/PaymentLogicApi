@@ -45,7 +45,7 @@ class PurchaseModule {
                                 cwa.processDataCaptureRequest();
                                 dc.getSystemJob(4).then((systemJob) => {
                                     systemJobId = systemJob[0][0].value
-                                    cy.wait(50000);
+                                    cy.wait(80000);
                                     dc.getSystemJobId(systemJobId).then((systemJobId) => {
                                         if(systemJobId[0][2].value != expectedSystemJobStatus) {
                                             throw new Error(rd.incorrectSystemJobStatus);
