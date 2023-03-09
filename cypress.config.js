@@ -2,6 +2,8 @@ const { defineConfig } = require("cypress");
 const sqlServer = require('cypress-sql-server');
 
 module.exports = defineConfig({
+  defaultCommandTimeout: 10000,
+  taskTimeout: 10000,
   projectId: 'h48ogp',
   e2e: {
     setupNodeEvents(on, config) {
