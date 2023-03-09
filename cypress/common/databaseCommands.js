@@ -11,7 +11,7 @@ class databaseCommands {
 
     /*dbo.AddressItems */
     getAddressItems(addressEntityId, entityRecordId) {
-        var dbCommand = `select top 1 * from AddressItems where addressentityid = '` + addressEntityId + `'` + ` and entityrecordid = '` + entityRecordId + `'` + ` order by id desc`;
+        var dbCommand = `select top 1 * from AddressItems where addressEntityId = '` + addressEntityId + `'` + ` and entityRecordId = '` + entityRecordId + `'` + ` order by id desc`;
         return cy.sqlServer(dbCommand).then((result) => {
             return result
         })
@@ -19,14 +19,14 @@ class databaseCommands {
 
     /*dbo.AmexApiMerchantConfig */
     getAmexApiMerchantConfigByApiId(apiId) {
-        var dbCommand = `select * from AmexApiMerchantConfig where apiid = '` + apiId + `'`;
+        var dbCommand = `select * from AmexApiMerchantConfig where apiId = '` + apiId + `'`;
         return cy.sqlServer(dbCommand).then((result) => {
             return result
         })
     }
 
     getRandomAmexApiMerchantConfig(credentialId = '3') {
-        var dbCommand = `select top 1 * from AmexApiMerchantConfig where ApiCredentialsId = '` + credentialId + `'` + ` and isActive = 1 order by newid()`;
+        var dbCommand = `select top 1 * from AmexApiMerchantConfig where ApiCredentialsId = '` + credentialId + `'` + ` and isActive = 1 order by newId()`;
         return cy.sqlServer(dbCommand).then((result) => {
             return result
         })
@@ -34,22 +34,22 @@ class databaseCommands {
 
     /*dbo.AmexApiPosConfig */
     getAmexApiPosConfigByApiId(apiId) {
-        var dbCommand = `select * from AmexApiPosConfig where apiid = '` + apiId + `'`;
+        var dbCommand = `select * from AmexApiPosConfig where apiId = '` + apiId + `'`;
         return cy.sqlServer(dbCommand).then((result) => {
             return result
         })
     }
 
     getRandomAmexApiPosConfig(credentialId = '3') {
-        var dbCommand = `select top 1 * from AmexApiPosConfig where ApiCredentialsId = '` + credentialId + `'` + ` and isActive = 1 order by newid()`;
+        var dbCommand = `select top 1 * from AmexApiPosConfig where ApiCredentialsId = '` + credentialId + `'` + ` and isActive = 1 order by newId()`;
         return cy.sqlServer(dbCommand).then((result) => {
             return result
         })
     }
 
     /*dbo.ApiCredentials*/
-    getRandomApiCredentials(ressellerId = '5') {
-        var dbCommand = `select * from ApiCredentials where resellerid = '` + ressellerId + `'`;
+    getRandomApiCredentials(resellerId = '5') {
+        var dbCommand = `select * from ApiCredentials where resellerId = '` + resellerId + `'`;
         return cy.sqlServer(dbCommand).then((result) => {
             return result
         })
@@ -64,14 +64,14 @@ class databaseCommands {
     }
 
     getCardDetailsByApiId(apiId) {
-        var dbCommand = `select * from Cards where apiid = '` + apiId + `'`;
+        var dbCommand = `select * from Cards where apiId = '` + apiId + `'`;
         return cy.sqlServer(dbCommand).then((result) => {
             return result
         })
     }
 
     getRandomCards(cardType = 'Amex', credentialId = '3') {
-        var dbCommand = `select top 1 * from cards where cardTypeCode = '` + cardType + `'` + `and apicredentialId = '` + credentialId + `'` + `order by newid()`;
+        var dbCommand = `select top 1 * from cards where cardTypeCode = '` + cardType + `'` + `and apiCredentialId = '` + credentialId + `'` + `order by newId()`;
         return cy.sqlServer(dbCommand).then((result) => {
             return result
         })
@@ -79,7 +79,7 @@ class databaseCommands {
 
     /*dbo.GcagAuthorisations */
     getGcagAuthorisationsByTransactionId(transactionId) {
-        var dbCommand = `select * from GcagAuthorisations where transactionid = '` + transactionId + `'`;
+        var dbCommand = `select * from GcagAuthorisations where transactionId = '` + transactionId + `'`;
         return cy.sqlServer(dbCommand).then((result) => {
             return result
         })
@@ -87,7 +87,7 @@ class databaseCommands {
 
     /*dbo.Merchants*/
     getRandomMerchant() {
-        var dbCommand = `select top 1 * from merchants where isActive = 1 order by newid()`;
+        var dbCommand = `select top 1 * from merchants where isActive = 1 order by newId()`;
         return cy.sqlServer(dbCommand).then((result) => {
             return result
         })
@@ -110,7 +110,7 @@ class databaseCommands {
 
     /*dbo.Transactions*/
     getTransactionByApiId(apiId) {
-        var dbCommand = `select * from transactions where apiid = '` + apiId + `'`;
+        var dbCommand = `select * from transactions where apiId = '` + apiId + `'`;
         return cy.sqlServer(dbCommand).then((result) => {
             return result
         })

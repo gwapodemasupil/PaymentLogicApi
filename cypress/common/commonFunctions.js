@@ -14,24 +14,24 @@ class commonFunctions {
     }
 
     generateRandomCardNumber(cardType) {
-        var cardnumber = '';
+        var cardNumber = '';
 
         if (cardType == 'mastercard')
         {
-            var cardnumberList = ['5555555555554444', '5105105105105100', '5371521800329620']
-            cardnumberList[(Math.random() * cardnumberList.length) | 0]
+            var cardNumberList = ['5555555555554444', '5105105105105100', '5371521800329620']
+            cardNumberList[(Math.random() * cardNumberList.length) | 0]
         }
         else if (cardType == 'visa')
         {
-            var cardnumberList = ['4111111111111111', '4012888888881881', '4916369189504016']
-            cardnumber = cardnumberList[(Math.random() * cardnumberList.length) | 0]
+            var cardNumberList = ['4111111111111111', '4012888888881881', '4916369189504016']
+            cardNumber = cardNumberList[(Math.random() * cardNumberList.length) | 0]
         }
         else
         {
-            var cardnumberList = ['371111111111114', '371111111111130', '371111111111161']
-            cardnumber = cardnumberList[(Math.random() * cardnumberList.length) | 0]
+            var cardNumberList = ['371111111111114', '371111111111130', '371111111111161']
+            cardNumber = cardNumberList[(Math.random() * cardNumberList.length) | 0]
         }
-        return cardnumber;
+        return cardNumber;
     }
     
     setMaskedCardNumber(cardNumber) {
@@ -92,8 +92,8 @@ class commonFunctions {
 
     generateCardInputCapability() {
         var cardInput = ''
-        var cardinputList = ['0', '1', '2', '3', '4', '5', '6']
-        return cardInput = cardinputList[(Math.random() * cardinputList.length) | 0]
+        var cardInputList = ['0', '1', '2', '3', '4', '5', '6']
+        return cardInput = cardInputList[(Math.random() * cardInputList.length) | 0]
     }
 
     generateCardCaptureCapability() {
@@ -126,13 +126,13 @@ class commonFunctions {
         return cardData = cardDataList[(Math.random() * cardDataList.length) | 0]
     }
 
-    generateCardmemberAuthMethod() {
+    generatecardMemberAuthMethod() {
         var cardMemberAuth = ''
         var cardMemberAuthList = ['0', '1', '5', '6', 'S']
         return cardMemberAuth = cardMemberAuthList[(Math.random() * cardMemberAuthList.length) | 0]
     }
 
-    generateCardmemberAuthEntity() {
+    generatecardMemberAuthEntity() {
         var cardMemberAuth = ''
         var cardMemberAuthList = ['0', '1', '2', '3', '4', '5']
         return cardMemberAuth = cardMemberAuthList[(Math.random() * cardMemberAuthList.length) | 0]
@@ -169,7 +169,7 @@ class commonFunctions {
     }
 
     generateGatewaySettlementDate() {
-        let getwaySettlementDate = '';
+        let gatewaySettlementDate = '';
         let date = '';
         let aus = new Date();
         let ausTime = aus.getUTCHours() + 11;
@@ -182,7 +182,7 @@ class commonFunctions {
             date = ("0" + aus.getDate()).slice(-2);
         }
 
-        return getwaySettlementDate = year + "-" + month + "-" + date;
+        return gatewaySettlementDate = year + "-" + month + "-" + date;
     }
 
     generateAuthorisationDate() {

@@ -119,8 +119,8 @@ class PosConfigModule {
         assert.equal(dbResponse[0][6].value, posConfig.cardholderPresent, 'CardholderPresent checking');
         assert.equal(dbResponse[0][7].value, posConfig.cardPresent, 'CardPresent checking');
         assert.equal(dbResponse[0][8].value, posConfig.cardDataInputMode, 'CardDataInputMode checking');
-        assert.equal(dbResponse[0][9].value, posConfig.cardmemberAuthMethod, 'CardmemberAuthMethod checking');
-        assert.equal(dbResponse[0][10].value, posConfig.cardmemberAuthEntity, 'CardmemberAuthEntity checking');
+        assert.equal(dbResponse[0][9].value, posConfig.cardMemberAuthMethod, 'cardMemberAuthMethod checking');
+        assert.equal(dbResponse[0][10].value, posConfig.cardMemberAuthEntity, 'cardMemberAuthEntity checking');
         assert.equal(dbResponse[0][11].value, posConfig.cardDataOutputCapability, 'CardDataOutputCapability checking');
         assert.equal(dbResponse[0][12].value, posConfig.terminalOutputCapability, 'TerminalOutputCapability checking');
         assert.equal(dbResponse[0][13].value, posConfig.pinCaptureCapability, 'PinCaptureCapability checking');
@@ -137,9 +137,9 @@ class PosConfigModule {
         assert.equal(apiResponse.body.operatingEnvironment, posConfig.operatingEnvironment, 'OperatingEnvironment checking');
         assert.equal(apiResponse.body.cardholderPresent, posConfig.cardholderPresent, 'CardholderPresent checking');
         assert.equal(apiResponse.body.cardDataInputMode, posConfig.cardDataInputMode, 'CardPresent checking');
-        assert.equal(apiResponse.body.cardmemberAuthMethod, posConfig.cardmemberAuthMethod, 'CardDataInputMode checking');
-        assert.equal(apiResponse.body.cardmemberAuthEntity, posConfig.cardmemberAuthEntity, 'CardmemberAuthMethod checking');
-        assert.equal(apiResponse.body.cardmemberAuthEntity, posConfig.cardmemberAuthEntity, 'CardmemberAuthEntity checking');
+        assert.equal(apiResponse.body.cardMemberAuthMethod, posConfig.cardMemberAuthMethod, 'CardDataInputMode checking');
+        assert.equal(apiResponse.body.cardMemberAuthEntity, posConfig.cardMemberAuthEntity, 'cardMemberAuthMethod checking');
+        assert.equal(apiResponse.body.cardMemberAuthEntity, posConfig.cardMemberAuthEntity, 'cardMemberAuthEntity checking');
         assert.equal(apiResponse.body.cardDataOutputCapability, posConfig.cardDataOutputCapability, 'CardDataOutputCapability checking');
         assert.equal(apiResponse.body.terminalOutputCapability, posConfig.terminalOutputCapability, 'TerminalOutputCapability checking');
         assert.equal(apiResponse.body.pinCaptureCapability, posConfig.pinCaptureCapability, 'PinCaptureCapability checking');

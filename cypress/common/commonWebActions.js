@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
-import resourcedata from "./resourceData";
-const rd = new resourcedata
+import resourceData from "./resourceData";
+const rd = new resourceData
 
 class commonWebActions {
     launchPaymentLogicPage() {

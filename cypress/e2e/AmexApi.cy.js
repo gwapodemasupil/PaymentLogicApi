@@ -72,7 +72,7 @@ describe('01_Amex API Card Module', () => {
       cardModule.addCard(cards, cardType, false, true);
     })
 
-    it('03-02 - verify that it cannot get card metada using an invalid credentials', () => {
+    it('03-02 - verify that it cannot get card metadata using an invalid credentials', () => {
       const method = 'GET'
       cardModule.accessCardStatusUsingInvalidCredentials(method, false);
     })

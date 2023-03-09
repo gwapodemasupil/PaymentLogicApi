@@ -15,8 +15,8 @@ class PosConfigModuleConfiguration {
             cardholderPresent : cf.generateCardholderPresent(),
             cardPresent: cf.generateCardPresent(),
             cardDataInputMode: cf.generateCardDataInputMode(),
-            cardmemberAuthMethod: cf.generateCardmemberAuthMethod(),
-            cardmemberAuthEntity: cf.generateCardmemberAuthEntity(),
+            cardMemberAuthMethod: cf.generatecardMemberAuthMethod(),
+            cardMemberAuthEntity: cf.generatecardMemberAuthEntity(),
             cardDataOutputCapability: cf.generateCardDataOutputCapability(),
             terminalOutputCapability: cf.generateTerminalOutputCapability(),
             pinCaptureCapability: cf.generatePinCaptureCapability()
