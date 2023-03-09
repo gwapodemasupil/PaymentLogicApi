@@ -64,6 +64,18 @@ class PurchaseModule {
         })
     }
 
+    invokePurchaseEndpointUsingInvalidCredentials(purchaseDetails) {
+        //Invoke Purchase endpoint using a null credentials
+        cy.invokePurchaseEndpoint(null, null, purchaseDetails).then((apiResponse) => {
+            cc.checkResponseBodyInvalidCredentials(apiResponse);
+        })
+
+        //Invoke Purchase endpoint using an invalid credentials
+        cy.invokePurchaseEndpoint(cf.generateRandomString(7), cf.generateRandomString(7), purchaseDetails).then((apiResponse) => {
+            cc.checkResponseBodyInvalidCredentials(apiResponse);
+        })
+    }
+
     checkResponseBodyPurchase(apiResponse) {
         expect(apiResponse.body).to.have.property('responseCode')
         expect(apiResponse.body).to.have.property('amount')

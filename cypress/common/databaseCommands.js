@@ -102,7 +102,7 @@ class databaseCommands {
     }
 
     getSystemJobId(systemJobId) {
-        var dbCommand = `select top 1 * from SystemJobs where id = '`+ systemJobId + `'` + ` order by id desc`;
+        var dbCommand = `select top 1 * from SystemJobs where id = '` + systemJobId + `'` + ` order by id desc`;
         return cy.sqlServer(dbCommand).then((result) => {
             return result
         })

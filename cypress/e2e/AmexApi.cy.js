@@ -6,13 +6,15 @@ import MerchantModule from "./modules/MerchantModule"
 import PosConfigModule from "./modules/PosConfigModule"
 import PurchaseModule from "./modules/PurchaseModule"
 
-
 /*Fixtures*/
 import CardModuleConfiguration from "../fixtures/CardModuleConfiguration"
 import MerchantModuleConfiguration from "../fixtures/MerchantModuleConfiguration"
 import PosConfigModuleConfiguration from "../fixtures/PosConfigModuleConfiguration"
 import PurchaseModuleConfiguration from "../fixtures/PurchaseModuleConfiguration"
 
+/*Common*/
+import commonWebActions from "../common/commonWebActions"
+import databaseCommands from "../common/databaseCommands"
 
 const cardModule = new CardModule
 const cardModuleConfig = new CardModuleConfiguration
@@ -22,14 +24,8 @@ const posConfigModule = new PosConfigModule
 const posConfigModuleConfiguration = new PosConfigModuleConfiguration
 const purchaseModule = new PurchaseModule
 const purchaseModuleConfiguration = new PurchaseModuleConfiguration
-
-/*Delete after test*/
-import commonWebActions from "../common/commonWebActions"
-import databaseCommands from "../common/databaseCommands"
-
 const cwa = new commonWebActions
 const dc = new databaseCommands
-
 
 describe('01_Amex API Card Module', () => {
     it('01-01 verify that it can successfully add Amex Card using a valid credentials', () => {
@@ -184,15 +180,17 @@ describe('03_AMEX API Pos Config Module', () => {
 })
 
 describe('04_AMEX API Purchase Module', () => {
-    it.only('01 - verify that it can successfully perform payment', () => {
+    it('01-01 verify that it can successfully perform payment', () => {
       const cardType = 'amex'
       const purchaseDetails = purchaseModuleConfiguration.Purchase(cardType);
       cwa.launchPaymentLogicPage();
       purchaseModule.purchase(purchaseDetails);
     })
-    it('test', () => {
-      cwa.launchPaymentLogicPage();
-      cwa.processDataCaptureRequest();
+
+    it('01-02 - verify that it cannot perform payment', () => {
+      const cardType = 'amex'
+      const purchaseDetails = purchaseModuleConfiguration.Purchase(cardType);
+      purchaseModule.invokePurchaseEndpointUsingInvalidCredentials(purchaseDetails);
     })
 
 })
