@@ -2,6 +2,7 @@ const { defineConfig } = require("cypress");
 const sqlServer = require('cypress-sql-server');
 
 module.exports = defineConfig({
+  projectId: 'h48ogp',
   e2e: {
     setupNodeEvents(on, config) {
       tasks = sqlServer.loadDBPlugin(config.env.db)
