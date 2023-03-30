@@ -17,8 +17,8 @@ module.exports = defineConfig({
     webBaseUrl: "https://stage-web.paymentlogic.com.au/",
     hostServices: "stage-amexapi.paymentlogic.com.au",
     db: {
-      userName: "sql_Arvin",
-      password: "ONU0ZyLGbsAGqxR",
+      userName: "",
+      password: "",
       server: "paymentlogic.database.windows.net",
       options: {
         database: "PaymentLogicSTG",
